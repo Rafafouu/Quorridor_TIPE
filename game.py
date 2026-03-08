@@ -116,6 +116,10 @@ class Case :
         }
 
         return mapping.get((l, r, u, d), "?")
+    
+
+class Joueur : 
+    pass
 
 board = Plateau(9)
 print(board)
