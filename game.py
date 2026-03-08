@@ -118,8 +118,30 @@ class Case :
         return mapping.get((l, r, u, d), "?")
     
 
-class Joueur : 
-    pass
+class Joueur:
+
+    def __init__(self,row,col,goal):
+        self.row = row
+        self.col = col
+        self.goal = goal
+
+    def can_move(self,direction,plateau):
+        return getattr(plateau.board[self.row][self.col],direction) is not None #j ai cherché sur internet pour savoir comment prendre un attribut depuis un argument
+    
+    def move(self,direction,plateau):
+        if not self.can_move(direction,plateau):
+            if direction == "left":
+                self.col -= 1
+            elif direction == "right":
+                self.col += 1
+            elif direction == "up":
+                self.row -= 1
+            elif direction == "down":
+                self.row += 1
+        else :
+            print("je doute que tu puisses traverser les murs")
+    
+
 
 board = Plateau(9)
 print(board)
