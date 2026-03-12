@@ -10,10 +10,22 @@
     Sorties : 
 
         resultats attendues : Position optimale du joueur, temps pris pour jouer un coup
-        test précis : victoire du joueur en grande quantité face à différents joueurs
-        bases de données : Aucune
+        test précis : victoire du joueur en grande quantité face à différents joueurs  / coup choisies pour situations ou coup optilal connues
+        bases de données : Parties de Quorridor avec situations optimales connues
 
 2. Diagramme de composante : vision interne sans détails 
+
+    cf Diagramme
+
+3. Détails des Briques les plus compliquées 
+
+    Alpha beta : va déterminer le meilleur coup a la manière du minimax mais en faisant du prunning : c'est à dire limiter
+    le nombre de branches à regarder pour determiner un coup qui nous met dans une situation optimale en considérant que l'
+    adversaire va aussi a chaque fois jouer le meilleur coup
+    complexité estimée : O(n!)
+
+    fonctions d'évaluations : plusieurs fonctions qui vont regarder un paramètre en particulier comme par exemple la distance par 
+    rapport à l'arrivée
 
     
 
