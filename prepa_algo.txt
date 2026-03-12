@@ -10,7 +10,9 @@
     Sorties : 
 
         resultats attendues : Position optimale du joueur, temps pris pour jouer un coup
-        test précis : victoire du joueur en grande quantité face à différents joueurs  / coup choisies pour situations ou coup optilal connues
+        test précis : victoire du joueur en grande quantité face à différents joueurs  / coup choisies pour situations ou coup optilal connues:
+            Joueur a une case de la victoire : devra se deplacer pour gagner 
+
         bases de données : Parties de Quorridor avec situations optimales connues
 
 2. Diagramme de composante : vision interne sans détails 
@@ -22,11 +24,32 @@
     Alpha beta : va déterminer le meilleur coup a la manière du minimax mais en faisant du prunning : c'est à dire limiter
     le nombre de branches à regarder pour determiner un coup qui nous met dans une situation optimale en considérant que l'
     adversaire va aussi a chaque fois jouer le meilleur coup
-    complexité estimée : O(n!)
+    
 
     fonctions d'évaluations : plusieurs fonctions qui vont regarder un paramètre en particulier comme par exemple la distance par 
     rapport à l'arrivée
 
-    
+    plateau de Quorridor : va nous permettre de modeliser le plateau, placer des barrieres, déplacer un pion,
+    determiner si un coup est légal etc
+
+    complexités non pertinentes pour l'instant
+
+    tests : 
+        plateau : chaque sous fonction sera exécuté dans toutes les possibilitées pour vérifier son bon fonctionnement
+        alpha beta : representation de ses choix disponibles et vérification que l'algorithme renvoie la bonne valeur 
+        fonctions d'évaluations : selection du coup cohérent avec la situation
+
+4. Choix technique : 
+    langage Python au debut pour se concentrer sur l'algorithmique
+    ensuite on pourra eventuellement retranscrire en C pour obtenir de meilleurs résultats et optimiser 
+
+    Structure de données : Classe python : 
+                Plateau
+                Cases
+                Joueur
+                fonctions d'évaluations
+
+    Bibiotheques : aucunes pour l instant 
+
 
     
