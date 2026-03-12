@@ -1,0 +1,6 @@
+Faire sauter une case si y a un pion
+nombre de barrières limites 
+fonctions d'évaluations
+alpha beta
+variations style 4 joueurs 
+                barrieres unisens
