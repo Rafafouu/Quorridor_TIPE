@@ -126,7 +126,7 @@ class Joueur:
         self.goal = goal
 
     def can_move(self,direction,plateau):
-        return getattr(plateau.board[self.row][self.col],direction) is not None #j ai cherché sur internet pour savoir comment prendre un attribut depuis un argument
+        return getattr(plateau.board[self.row][self.col],direction) is not None
     
     def move(self,direction,plateau):
         if not self.can_move(direction,plateau):
