@@ -4,3 +4,7 @@ fonctions d'évaluations
 alpha beta
 variations style 4 joueurs 
                 barrieres unisens
+
+
+---------------------------------
+

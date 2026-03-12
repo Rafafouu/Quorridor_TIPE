@@ -1,0 +1,20 @@
+1. Specification fonctionnelle d'un joueur pendant 1 tour
+
+    Entrée : 
+
+        données d'entrées : Un plateau de Quorridor
+        formes : instance de la classe Plateau 
+        (fichiers python en brut dans le code)
+        Aucune hypothèse restrictive si ce n'est de respecter les règles du Quorridor
+
+    Sorties : 
+
+        resultats attendues : Position optimale du joueur, temps pris pour jouer un coup
+        test précis : victoire du joueur en grande quantité face à différents joueurs
+        bases de données : Aucune
+
+2. Diagramme de composante : vision interne sans détails 
+
+    
+
+    
