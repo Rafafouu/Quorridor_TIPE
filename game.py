@@ -49,13 +49,22 @@ class Joueur:
         self.case = case
         self.goal = goal
         self.bar= BARRIERE_START
+    
+    def move(self,plateau: "Plateau", destination : Case):
+        if destination in plateau.get_accessible_cases(self):
+            self.case = destination
+    
+    def try_place_wall(self, plateau: "Plateau", i, j, is_vertical=False):
+        return plateau.try_place_wall(i, j, is_vertical)
 
+    def play(self):
+        pass
 
 
 
 
 class Plateau :
-    def __init__(self,dimension,j1,j2):
+    def __init__(self,dimension):
         self.dim = dimension
         self.board = [[Case(i,j) for j in range(self.dim)] for i in range(self.dim)]
 
@@ -69,6 +78,10 @@ class Plateau :
                     self.board[i][j].left = self.board[i][j-1]
                 if j<self.dim-1:
                     self.board[i][j].right = self.board[i][j+1]
+        self.j1 = None
+        self.j2 = None
+    
+    def add_players(self, j1, j2):
         self.j1 = j1
         self.j2 = j2
 
@@ -231,5 +244,10 @@ class Plateau :
         return list(set(l))
 
 
-
 BARRIERE_START = 10
+
+plateau = Plateau(9)
+j1 = Joueur(plateau[8][4], [case for case in plateau[0]])
+j2 = Joueur(plateau[0][0], [case for case in plateau[8]])
+plateau.add_players(j1, j2)
+
