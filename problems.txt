@@ -1,0 +1,2 @@
+on voudrait deep copy le plateau entier pour placer un mur sur la copie 'fantome' temporaire pour faire le bfs sur un plateau futur avec le mur placé mais ca coute trop cher c'est nul dommage
+

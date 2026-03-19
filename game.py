@@ -1,3 +1,5 @@
+
+
 class Case : 
     def __init__(self,row,col,left= None,right = None,up= None,down = None):
         self.row = row
@@ -6,7 +8,6 @@ class Case :
         self.right = right
         self.up = up
         self.down= down
-        self.has_player = False
         
     
     def __repr__(self):
@@ -44,10 +45,11 @@ class Case :
 
 class Joueur:
 
-    def __init__(self,case: Case,goal):
+    def __init__(self,case: Case, goal : list[Case]):
         self.case = case
         self.goal = goal
         self.bar= BARRIERE_START
+
 
 
 
@@ -70,6 +72,7 @@ class Plateau :
         self.j1 = j1
         self.j2 = j2
 
+    #peut placer un mur PHYSIQUEMENT
     def can_wall(self,i,j,is_vertical): 
         if not is_vertical:
             
@@ -93,12 +96,16 @@ class Plateau :
             
         return True
     
-    def can_finish_BFS(self,case,goal):
-        vu = [] 
+    def can_finish_BFS(self,joueur):
+        vu = []
+        case = joueur.case
         file = [case]
         while file :
-            case = file[0]
-            if case.row == goal:
+            if not case:
+                continue
+            
+            case = file.pop(0)
+            if case in joueur.goal:
                 return True
             if case not in vu : 
                 vu.append(case)
@@ -107,20 +114,40 @@ class Plateau :
                 file.append(case.right)
                 file.append(case.left)
         return False 
- 
-    def place_wall(self, i, j, is_vertical=False): 
-        if self.can_wall(i,j,is_vertical):
-            if not is_vertical: 
-                self.board[i][j].up = None
-                self.board[i][j+1].up = None
-                self.board[i-1][j].down = None
-                self.board[i-1][j+1].down = None
 
-            if is_vertical :
-                self.board[i][j].left = None
-                self.board[i+1][j].left = None
-                self.board[i][j-1].right = None
-                self.board[i+1][j-1].right = None
+    #essaye de placer un mur (vérifie physiquement + autorisé par les regles)
+    def try_place_wall(self, i, j, is_vertical=False):
+        if not self.can_wall(i, j, is_vertical):
+            return False
+
+        saved = []
+
+        def save_and_cut(case, direction):
+            saved.append((case, direction, getattr(case, direction)))
+            setattr(case, direction, None)
+
+        # APPLY
+        if not is_vertical:
+            save_and_cut(self.board[i][j], "up")
+            save_and_cut(self.board[i][j+1], "up")
+            save_and_cut(self.board[i-1][j], "down")
+            save_and_cut(self.board[i-1][j+1], "down")
+        else:
+            save_and_cut(self.board[i][j], "left")
+            save_and_cut(self.board[i+1][j], "left")
+            save_and_cut(self.board[i][j-1], "right")
+            save_and_cut(self.board[i+1][j-1], "right")
+
+        
+
+        #si on peut plus finir on revient a l'état initual et on renvoie false
+        if not (self.can_finish_BFS(self.j1) and self.can_finish_BFS(self.j2)):
+            for case, attr, val in saved: 
+                setattr(case, attr, val)
+            return False
+
+        return True
+    
 
     def __repr__(self):
         string = ""
@@ -140,7 +167,7 @@ class Plateau :
         l = []
         j_other = self.get_other_player(j_current)
 
-
+        #down
         if j_current.case.down:
             if j_current.case.down != j_other.case:
                 l.append(j_current.case.down)
@@ -155,6 +182,53 @@ class Plateau :
                     if j_current.case.down.left :
                         l.append(j_current.case.down.left)        
 
+        #up
+        if j_current.case.up:
+            if j_current.case.up != j_other.case:
+                l.append(j_current.case.up)
+            else:
+                if j_current.case.up.up :
+                    l.append(j_current.case.up.up)  
+
+                else :
+                    if j_current.case.up.right :
+                        l.append(j_current.case.up.right)  
+
+                    if j_current.case.up.left :
+                        l.append(j_current.case.up.left)
+        
+
+        #left
+        if j_current.case.left:
+            if j_current.case.left != j_other.case:
+                l.append(j_current.case.left)
+            else:
+                if j_current.case.left.left :
+                    l.append(j_current.case.left.left)  
+
+                else :
+                    if j_current.case.left.up :
+                        l.append(j_current.case.left.up)  
+
+                    if j_current.case.left.down :
+                        l.append(j_current.case.left.down)        
+
+        #right
+        if j_current.case.right:
+            if j_current.case.right != j_other.case:
+                l.append(j_current.case.right)
+            else:
+                if j_current.case.right.right :
+                    l.append(j_current.case.right.right)  
+
+                else :
+                    if j_current.case.right.up :
+                        l.append(j_current.case.right.up)  
+
+                    if j_current.case.right.down :
+                        l.append(j_current.case.right.down)  
+        
+        return list(set(l))
 
 
 
