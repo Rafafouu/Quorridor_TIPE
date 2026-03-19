@@ -1,5 +1,59 @@
+class Case : 
+    def __init__(self,row,col,left= None,right = None,up= None,down = None):
+        self.row = row
+        self.col = col
+        self.left = left
+        self.right = right
+        self.up = up
+        self.down= down
+        self.has_player = False
+        
+    
+    def __repr__(self):
+        l = self.left is not None
+        r = self.right is not None
+        u = self.up is not None
+        d = self.down is not None
+
+        mapping = {
+            (1,1,1,1): "╬",
+
+            (1,1,0,0): "═",
+            (0,0,1,1): "║",
+
+            (1,0,1,0): "╝",
+            (0,1,1,0): "╚",
+            (1,0,0,1): "╗",
+            (0,1,0,1): "╔",
+
+            (1,1,1,0): "╩",
+            (1,1,0,1): "╦",
+            (1,0,1,1): "╣",
+            (0,1,1,1): "╠",
+
+            (0,0,0,1): "╥",
+            (0,0,1,0): "╨",
+            (1,0,0,0): "╡",
+            (0,1,0,0): "╞",
+
+            (0,0,0,0): "Ⓞ"
+        }
+
+        return mapping.get((l, r, u, d), "?")
+
+
+class Joueur:
+
+    def __init__(self,case: Case,goal):
+        self.case = case
+        self.goal = goal
+        self.bar= BARRIERE_START
+
+
+
+
 class Plateau :
-    def __init__(self,dimension):
+    def __init__(self,dimension,j1,j2):
         self.dim = dimension
         self.board = [[Case(i,j) for j in range(self.dim)] for i in range(self.dim)]
 
@@ -13,6 +67,8 @@ class Plateau :
                     self.board[i][j].left = self.board[i][j-1]
                 if j<self.dim-1:
                     self.board[i][j].right = self.board[i][j+1]
+        self.j1 = j1
+        self.j2 = j2
 
     def can_wall(self,i,j,is_vertical): 
         if not is_vertical:
@@ -50,7 +106,7 @@ class Plateau :
                 file.append(case.down)
                 file.append(case.right)
                 file.append(case.left)
-        return False #chaque joueur devra etre check avec son goal respectif pour can wall
+        return False 
  
     def place_wall(self, i, j, is_vertical=False): 
         if self.can_wall(i,j,is_vertical):
@@ -74,80 +130,32 @@ class Plateau :
             string = string + "\n"
         
         return string
-
-
-class Case : 
-    def __init__(self,row,col,left= None,right = None,up= None,down = None):
-        self.row = row
-        self.col = col
-        self.left = left
-        self.right = right
-        self.up = up
-        self.down= down
     
-    def __repr__(self):
-        l = self.left is not None
-        r = self.right is not None
-        u = self.up is not None
-        d = self.down is not None
-
-        mapping = {
-            (1,1,1,1): "╬",
-
-            (1,1,0,0): "═",
-            (0,0,1,1): "║",
-
-            (1,0,1,0): "╝",
-            (0,1,1,0): "╚",
-            (1,0,0,1): "╗",
-            (0,1,0,1): "╔",
-
-            (1,1,1,0): "╩",
-            (1,1,0,1): "╦",
-            (1,0,1,1): "╣",
-            (0,1,1,1): "╠",
-
-            (0,0,0,1): "╥",
-            (0,0,1,0): "╨",
-            (1,0,0,0): "╡",
-            (0,1,0,0): "╞",
-
-            (0,0,0,0): "Ⓞ"
-        }
-
-        return mapping.get((l, r, u, d), "?")
+    def get_other_player(self,player):
+        if player == self.j1 :
+            return self.j2
+        return self.j1
     
-
-class Joueur:
-
-    def __init__(self,row,col,goal):
-        self.row = row
-        self.col = col
-        self.goal = goal
-
-    def can_move(self,direction,plateau):
-        return getattr(plateau.board[self.row][self.col],direction) is not None
-    
-    def move(self,direction,plateau):
-        if not self.can_move(direction,plateau):
-            if direction == "left":
-                self.col -= 1
-            elif direction == "right":
-                self.col += 1
-            elif direction == "up":
-                self.row -= 1
-            elif direction == "down":
-                self.row += 1
-        else :
-            print("je doute que tu puisses traverser les murs")
-    
+    def get_accessible_cases(self,j_current: Joueur):
+        l = []
+        j_other = self.get_other_player(j_current)
 
 
-board = Plateau(9)
-print(board)
-board.place_wall(0,0,False)
-print(board)
-board.place_wall(1,1,False)
-print(board)
-board.place_wall(1,1,True)
-print(board)
+        if j_current.case.down:
+            if j_current.case.down != j_other.case:
+                l.append(j_current.case.down)
+            else:
+                if j_current.case.down.down :
+                    l.append(j_current.case.down.down)  
+
+                else :
+                    if j_current.case.down.right :
+                        l.append(j_current.case.down.right)  
+
+                    if j_current.case.down.left :
+                        l.append(j_current.case.down.left)        
+
+
+
+
+BARRIERE_START = 10
