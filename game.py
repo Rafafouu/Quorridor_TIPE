@@ -1,4 +1,6 @@
 
+BARRIERE_START = 10
+
 
 class Case : 
     def __init__(self,row,col,left= None,right = None,up= None,down = None):
@@ -17,25 +19,25 @@ class Case :
         d = self.down is not None
 
         mapping = {
-            (1,1,1,1): "╬",
+            (1,1,1,1): "╬ ",
 
-            (1,1,0,0): "═",
-            (0,0,1,1): "║",
+            (1,1,0,0): "═ ",
+            (0,0,1,1): "║ ",
 
-            (1,0,1,0): "╝",
-            (0,1,1,0): "╚",
-            (1,0,0,1): "╗",
-            (0,1,0,1): "╔",
+            (1,0,1,0): "╝ ",
+            (0,1,1,0): "╚ ",
+            (1,0,0,1): "╗ ",
+            (0,1,0,1): "╔ ",
 
-            (1,1,1,0): "╩",
-            (1,1,0,1): "╦",
-            (1,0,1,1): "╣",
-            (0,1,1,1): "╠",
+            (1,1,1,0): "╩ ",
+            (1,1,0,1): "╦ ",
+            (1,0,1,1): "╣ ",
+            (0,1,1,1): "╠ ",
 
-            (0,0,0,1): "╥",
-            (0,0,1,0): "╨",
-            (1,0,0,0): "╡",
-            (0,1,0,0): "╞",
+            (0,0,0,1): "╥ ",
+            (0,0,1,0): "╨ ",
+            (1,0,0,0): "╡ ",
+            (0,1,0,0): "╞ ",
 
             (0,0,0,0): "Ⓞ"
         }
@@ -43,22 +45,33 @@ class Case :
         return mapping.get((l, r, u, d), "?")
 
 
+#faire inhéritance de classe pour créer des joueurs aux comportements différents
 class Joueur:
 
     def __init__(self,case: Case, goal : list[Case]):
         self.case = case
         self.goal = goal
-        self.bar= BARRIERE_START
+        self.barrieres = BARRIERE_START
     
-    def move(self,plateau: "Plateau", destination : Case):
+    def try_move(self,plateau: "Plateau", destination : Case):
         if destination in plateau.get_accessible_cases(self):
             self.case = destination
+            return True
+        return False
     
     def try_place_wall(self, plateau: "Plateau", i, j, is_vertical=False):
+
+        if self.barrieres <= 0:
+            return False
+
+        result = plateau.try_place_wall(i, j, is_vertical)
+        if result:
+            self.barrieres -= 1
+        
         return plateau.try_place_wall(i, j, is_vertical)
 
     def play(self):
-        pass
+        print("OVERWRITE THIS PLZ")
 
 
 
@@ -78,8 +91,8 @@ class Plateau :
                     self.board[i][j].left = self.board[i][j-1]
                 if j<self.dim-1:
                     self.board[i][j].right = self.board[i][j+1]
-        self.j1 = None
-        self.j2 = None
+        self.j1 : Joueur = None
+        self.j2 : Joueur= None
     
     def add_players(self, j1, j2):
         self.j1 = j1
@@ -160,15 +173,29 @@ class Plateau :
             return False
 
         return True
+
+    def game_ended(self):
+        return (self.j1.case in self.j1.goal) or (self.j2.case in self.j2.goal)
     
 
     def __repr__(self):
         string = ""
+
+        col_1, row_1 = self.j1.case.col, self.j1.case.row
+        col_2, row_2 = self.j2.case.col, self.j2.case.row
+
         for i in range(self.dim):
             for j in range(self.dim):
-                string = string + str(self.board[i][j])
+
+                if (i==row_1 and j==col_1):
+                    string = string + "🔴"
+                elif (i==row_2 and j==col_2):
+                    string = string + "🔵"
+                else:
+                    string = string + str(self.board[i][j])
+                
             string = string + "\n"
-        
+
         return string
     
     def get_other_player(self,player):
@@ -244,10 +271,6 @@ class Plateau :
         return list(set(l))
 
 
-BARRIERE_START = 10
 
-plateau = Plateau(9)
-j1 = Joueur(plateau[8][4], [case for case in plateau[0]])
-j2 = Joueur(plateau[0][0], [case for case in plateau[8]])
-plateau.add_players(j1, j2)
+
 
