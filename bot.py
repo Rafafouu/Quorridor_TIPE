@@ -1,14 +1,14 @@
 from game import *
 import random
 
+#bouge au hasard, place aucune barriere
 class RandomMoveBot(Joueur):
 
     def play(self):
         return self.try_move(random.choice(self.plateau.get_accessible_cases(self)))
 
 
-
-
+#place toutes ses barrieres au hasard puis bouge au hasard
 class RandomBot(Joueur):
 
     def place_random_barrier(self):
@@ -30,4 +30,11 @@ class RandomBot(Joueur):
             return self.place_random_barrier()
         else:
             return self.try_move(random.choice(self.plateau.get_accessible_cases(self)))
+        
+class AStarBot(Joueur):
+    
+    #TODO bot qui utilise A* avec comme heuristique la distance de manhattan avec l'arrivée
+
+    def play(self):
+        pass
         
