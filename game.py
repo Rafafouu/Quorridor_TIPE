@@ -48,27 +48,28 @@ class Case :
 #faire inhéritance de classe pour créer des joueurs aux comportements différents
 class Joueur:
 
-    def __init__(self,case: Case, goal : list[Case]):
+    def __init__(self,case: Case, goal : list[Case], plateau:"Plateau"):
         self.case = case
         self.goal = goal
+        self.plateau = plateau
         self.barrieres = BARRIERE_START
     
-    def try_move(self,plateau: "Plateau", destination : Case):
-        if destination in plateau.get_accessible_cases(self):
+    def try_move(self, destination : Case):
+        if destination in self.plateau.get_accessible_cases(self):
             self.case = destination
             return True
         return False
     
-    def try_place_wall(self, plateau: "Plateau", i, j, is_vertical=False):
+    def try_place_wall(self, i, j, is_vertical=False):
 
         if self.barrieres <= 0:
             return False
 
-        result = plateau.try_place_wall(i, j, is_vertical)
+        result = self.plateau.try_place_wall(i, j, is_vertical)
         if result:
             self.barrieres -= 1
         
-        return plateau.try_place_wall(i, j, is_vertical)
+        return self.plateau.try_place_wall(i, j, is_vertical)
 
     def play(self):
         print("OVERWRITE THIS PLZ")

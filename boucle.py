@@ -1,15 +1,18 @@
 from game import *
-import time
+from bot import Bot
 
-plateau = Plateau(9)
-j1 = Joueur(plateau.board[8][4], [case for case in plateau.board[0]])
-j2 = Joueur(plateau.board[0][4], [case for case in plateau.board[8]])
+
+plateau = Plateau(5)
+j1 = Bot(plateau.board[4][2], [case for case in plateau.board[0]], plateau)
+j2 = Bot(plateau.board[0][2], [case for case in plateau.board[4]], plateau)
 plateau.add_players(j1, j2)
 
 
 current_player = j1
 while not plateau.game_ended():
-    current_player.play()
     print(plateau)
-    time.sleep(1)
+    print(current_player.play())
+    
     current_player = plateau.get_other_player(current_player)
+    
+print(plateau)
