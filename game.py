@@ -1,5 +1,6 @@
+import time
 
-BARRIERE_START = 10
+BARRIERE_START = 5
 
 
 class Case : 
@@ -61,7 +62,7 @@ class Joueur:
         return False
     
     def try_place_wall(self, i, j, is_vertical=False):
-
+        time.sleep(0.2)
         if self.barrieres <= 0:
             return False
 
@@ -69,7 +70,7 @@ class Joueur:
         if result:
             self.barrieres -= 1
         
-        return self.plateau.try_place_wall(i, j, is_vertical)
+        return result
 
     def play(self):
         print("OVERWRITE THIS PLZ")
@@ -104,7 +105,7 @@ class Plateau :
         if not is_vertical:
             
             if i<1 or j>=self.dim - 1 :
-                print("dumbass")
+
                 return False
             if self.board[i][j].right ==None and self.board[i-1][j].right == None :
                 return False
@@ -114,7 +115,7 @@ class Plateau :
             
         else :
             if i>= self.dim - 1 or j<1 : 
-                print("dumbass")
+
                 return False
             if self.board[i][j].up == None and self.board[i][j-1].up == None :
                 return False
@@ -136,15 +137,20 @@ class Plateau :
                 return True
             if case not in vu : 
                 vu.append(case)
-                file.append(case.up)
-                file.append(case.down)
-                file.append(case.right)
-                file.append(case.left)
+                if case.up:
+                    file.append(case.up)
+                if case.down:
+                    file.append(case.down)
+                if case.right:
+                    file.append(case.right)
+                if case.left:
+                    file.append(case.left)
         return False 
 
     #essaye de placer un mur (vérifie physiquement + autorisé par les regles)
     def try_place_wall(self, i, j, is_vertical=False):
         if not self.can_wall(i, j, is_vertical):
+
             return False
 
         saved = []
@@ -171,6 +177,7 @@ class Plateau :
         if not (self.can_finish_BFS(self.j1) and self.can_finish_BFS(self.j2)):
             for case, attr, val in saved: 
                 setattr(case, attr, val)
+
             return False
 
         return True
