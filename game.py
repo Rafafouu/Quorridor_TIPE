@@ -1,6 +1,4 @@
-import time
-
-BARRIERE_START = 5
+BARRIERE_START = 10
 
 
 class Case : 
@@ -62,7 +60,7 @@ class Joueur:
         return False
     
     def try_place_wall(self, i, j, is_vertical=False):
-        time.sleep(0.2)
+        
         if self.barrieres <= 0:
             return False
 
