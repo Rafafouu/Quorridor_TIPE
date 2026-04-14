@@ -1,7 +1,11 @@
 BARRIERE_START = 10
 
 
-class Case : 
+class Case :
+
+    def __lt__(self, other): #pour la heapq apparemment jsp
+        return False
+
     def __init__(self,row,col,left= None,right = None,up= None,down = None):
         self.row = row
         self.col = col

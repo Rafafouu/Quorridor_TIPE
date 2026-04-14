@@ -1,5 +1,6 @@
 from game import *
 import random
+from bot_tools import *
 
 #bouge au hasard, place aucune barriere
 class RandomMoveBot(Joueur):
@@ -71,14 +72,13 @@ class HumanBot(Joueur):
 
 
 class AStarBot(Joueur):
-    
-    def a_star_shortest_path(self, start, end):
 
     #TODO bot qui utilise A* avec comme heuristique la distance de manhattan avec l'arrivée
 
     def play(self):
-        pass
-        
-
+        path = a_star_shortest_path(self)
+        if path:
+            return self.try_move(path[0])
+        return False
 
         
