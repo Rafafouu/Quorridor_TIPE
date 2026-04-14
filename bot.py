@@ -73,12 +73,12 @@ class HumanBot(Joueur):
 class AStarBot(Joueur):
     
     def a_star_shortest_path(self, start, end):
-
+        pass
     #TODO bot qui utilise A* avec comme heuristique la distance de manhattan avec l'arrivée
 
     def play(self):
         pass
-        
+
 
 
         

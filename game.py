@@ -63,9 +63,10 @@ class Joueur:
         if self.barrieres <= 0:
             return False
 
-        result = self.plateau.try_place_wall(i, j, is_vertical)
+        result = self.plateau.is_wall_legal(i, j, is_vertical)
         if result:
             self.barrieres -= 1
+            self.plateau.place_wall(i, j, is_vertical)
         
         return result
 
@@ -144,41 +145,56 @@ class Plateau :
                     file.append(case.left)
         return False 
 
-    #essaye de placer un mur (vérifie physiquement + autorisé par les regles)
-    def try_place_wall(self, i, j, is_vertical=False):
-        if not self.can_wall(i, j, is_vertical):
 
+    def save_and_cut(self,saved,case, direction):
+            saved.append((case, direction, getattr(case, direction)))
+            setattr(case, direction, None)
+
+
+    #essaye de placer un mur (vérifie physiquement + autorisé par les regles)
+
+    def is_wall_legal(self, i, j, is_vertical):
+
+        if not self.can_wall(i, j, is_vertical):
             return False
 
         saved = []
 
-        def save_and_cut(case, direction):
-            saved.append((case, direction, getattr(case, direction)))
-            setattr(case, direction, None)
-
-        # APPLY
         if not is_vertical:
-            save_and_cut(self.board[i][j], "up")
-            save_and_cut(self.board[i][j+1], "up")
-            save_and_cut(self.board[i-1][j], "down")
-            save_and_cut(self.board[i-1][j+1], "down")
+            self.save_and_cut(saved, self.board[i][j], "up")
+            self.save_and_cut(saved, self.board[i][j+1], "up")
+            self.save_and_cut(saved, self.board[i-1][j], "down")
+            self.save_and_cut(saved, self.board[i-1][j+1], "down")
         else:
-            save_and_cut(self.board[i][j], "left")
-            save_and_cut(self.board[i+1][j], "left")
-            save_and_cut(self.board[i][j-1], "right")
-            save_and_cut(self.board[i+1][j-1], "right")
+            self.save_and_cut(saved, self.board[i][j], "left")
+            self.save_and_cut(saved, self.board[i+1][j], "left")
+            self.save_and_cut(saved, self.board[i][j-1], "right")
+            self.save_and_cut(saved, self.board[i+1][j-1], "right")
+
+        legal = (
+            self.can_finish_BFS(self.j1)
+            and self.can_finish_BFS(self.j2)
+        )
+
+        for case, attr, val in saved:
+            setattr(case, attr, val)
+
+        return legal
+    
+    def place_wall(self,i,j,is_vertical): #prend UN COUP LEGAL    §§§§§§§§§!!!!!!!!
+        saved = []
+        if not is_vertical:
+            self.save_and_cut(saved,self.board[i][j], "up")
+            self.save_and_cut(saved,self.board[i][j+1], "up")
+            self.save_and_cut(saved,self.board[i-1][j], "down")
+            self.save_and_cut(saved,self.board[i-1][j+1], "down")
+        else:
+            self.save_and_cut(saved,self.board[i][j], "left")
+            self.save_and_cut(saved,self.board[i+1][j], "left")
+            self.save_and_cut(saved,self.board[i][j-1], "right")
+            self.save_and_cut(saved,self.board[i+1][j-1], "right")
 
         
-
-        #si on peut plus finir on revient a l'état initual et on renvoie false
-        if not (self.can_finish_BFS(self.j1) and self.can_finish_BFS(self.j2)):
-            for case, attr, val in saved: 
-                setattr(case, attr, val)
-
-            return False
-
-        return True
-
     def game_ended(self):
         return (self.j1.case in self.j1.goal) or (self.j2.case in self.j2.goal)
     
