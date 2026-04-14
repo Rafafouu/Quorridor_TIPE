@@ -9,7 +9,6 @@ class Case :
         self.right = right
         self.up = up
         self.down= down
-        
     
     def __repr__(self):
         l = self.left is not None

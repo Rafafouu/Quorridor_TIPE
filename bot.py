@@ -68,10 +68,12 @@ class HumanBot(Joueur):
             
             self.try_move(moves[ans])    
             return True
-                
+
 
 class AStarBot(Joueur):
     
+    def a_star_shortest_path(self, start, end):
+
     #TODO bot qui utilise A* avec comme heuristique la distance de manhattan avec l'arrivée
 
     def play(self):
