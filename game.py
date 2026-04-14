@@ -194,6 +194,8 @@ class Plateau :
             self.save_and_cut(saved,self.board[i][j-1], "right")
             self.save_and_cut(saved,self.board[i+1][j-1], "right")
 
+        return saved
+
         
     def game_ended(self):
         return (self.j1.case in self.j1.goal) or (self.j2.case in self.j2.goal)

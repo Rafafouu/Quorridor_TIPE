@@ -1,57 +1,43 @@
 from game import *
 
 class Action:
-    def __init__(self, kind, data): 
-        self.kind = kind      
-        self.data = data      
+    def __init__(self, action_type, destination=None, i=None, j=None, is_vertical=None):
+        self.type = action_type 
+        
+        
+        self.destination = destination
 
+        self.i = i
+        self.j = j
+        self.is_vertical = is_vertical  
 
-def is_wall_legal(self, i, j, is_vertical):  #ressemble a try place wall mais on back up tt le tps
-    if not self.can_wall(i, j, is_vertical):
-        return False
+def get_all_legal_actions(self, joueur):
+        actions = []
+        
+        for dest_case in self.get_accessible_cases(joueur):
+            actions.append(Action("MOVE", dest_case))
+            
+        
+        if joueur.barrieres > 0:
+            for i in range(self.dim):
+                for j in range(self.dim):
+                    
+                    if self.is_wall_legal(i, j, is_vertical=False):
+                        actions.append(Action("WALL", i=i, j=j, is_vertical=False))
+                   
+                    if self.is_wall_legal(i, j, is_vertical=True):
+                        actions.append(Action("WALL", i=i, j=j, is_vertical=True))
+                        
+        return actions
 
-    saved = []
-
-    def save_and_cut(case, direction):
-        saved.append((case, direction, getattr(case, direction)))
-        setattr(case, direction, None)
-
-    if not is_vertical:
-        save_and_cut(self.board[i][j], "up")
-        save_and_cut(self.board[i][j+1], "up")
-        save_and_cut(self.board[i-1][j], "down")
-        save_and_cut(self.board[i-1][j+1], "down")
-    else:
-        save_and_cut(self.board[i][j], "left")
-        save_and_cut(self.board[i+1][j], "left")
-        save_and_cut(self.board[i][j-1], "right")
-        save_and_cut(self.board[i+1][j-1], "right")
-
-    legal = (
-        self.can_finish_BFS(self.j1)
-        and self.can_finish_BFS(self.j2)
-    )
-
-    for case, attr, val in saved:
-        setattr(case, attr, val)
-
-    return legal
-
-
-def plateau_get_actions(self, joueur):
-
-    actions = []
-
-    for c in self.get_accessible_cases(joueur):
-        actions.append(Action("move", c))
-
-    if joueur.barrieres > 0:
-        for i in range(self.dim):
-            for j in range(self.dim):
-                for v in (False, True):
-                    if self.is_wall_legal(i, j, v):
-                        actions.append(Action("wall", (i, j, v)))
-
-    return actions
+def apply_action(self, joueur, action):
+        if action.type == "MOVE":
+            old_case = joueur.case
+            joueur.case = action.destination
+            return old_case   #pour backup
+            
+        elif action.type == "WALL":
+            joueur.barrieres -= 1
+            return joueur.plateau.place_wall(action.i, action.j, action.is_vertical) #pour backup
 
 
