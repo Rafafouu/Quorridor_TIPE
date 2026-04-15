@@ -1,6 +1,11 @@
 from game import *
 import heapq
 
+#tu veux juste pas coder comme si t avais une pile parce que devoir dire qu on importe une bibliothèque juste
+#pour des piles et files je trouve ca con
+
+
+
 def manhattan_distance_to_goal(case, player):
     return min([abs(case.row - goal_case.row) + abs(case.col - goal_case.col) for goal_case in player.goal])
 
@@ -41,45 +46,15 @@ def a_star_shortest_path(player):
     
     return None #aucun chemin
 
-
-class Action:
-    def __init__(self, action_type, destination=None, i=None, j=None, is_vertical=None):
-        self.type = action_type 
+def alpha_beta(eval : function ,plateau : Plateau ,profondeur : int,alpha : int,beta : int, joueur : Joueur, maxi : bool):
+    if profondeur ==  0 :
+        return eval(Plateau,joueur)
+    
+    if maxi :   #tour de joueur 
         
-        
-        self.destination = destination
+        value = -float("inf")
+        liste_actions = plateau.get_all_legal_actions(joueur)
 
-        self.i = i
-        self.j = j
-        self.is_vertical = is_vertical  
-
-def get_all_legal_actions(self, joueur):
-        actions = []
-        
-        for dest_case in self.get_accessible_cases(joueur):
-            actions.append(Action("MOVE", dest_case))
-            
-        
-        if joueur.barrieres > 0:
-            for i in range(self.dim):
-                for j in range(self.dim):
-                    
-                    if self.is_wall_legal(i, j, is_vertical=False):
-                        actions.append(Action("WALL", i=i, j=j, is_vertical=False))
-                   
-                    if self.is_wall_legal(i, j, is_vertical=True):
-                        actions.append(Action("WALL", i=i, j=j, is_vertical=True))
-                        
-        return actions
-
-def apply_action(self, joueur, action):
-        if action.type == "MOVE":
-            old_case = joueur.case
-            joueur.case = action.destination
-            return old_case   #pour backup
-            
-        elif action.type == "WALL":
-            joueur.barrieres -= 1
-            return joueur.plateau.place_wall(action.i, action.j, action.is_vertical) #pour backup
-
-
+    else :  #tour de other player 
+        value = float("inf")
+        liste_actions = plateau.get_all_legal_actions(joueur)
