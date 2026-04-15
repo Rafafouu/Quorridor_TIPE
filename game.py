@@ -336,7 +336,7 @@ class Plateau :
             joueur.barrieres -= 1
             return ("WALL",joueur.plateau.place_wall(action.i, action.j, action.is_vertical)) #pour backup
 
-    def undo_action(self,joueur,action,backup):
+    def undo_action(self,joueur,backup):
         back_type = backup[0]
         back_action = backup[1]
 
