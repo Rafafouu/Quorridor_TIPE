@@ -1,2 +1,9 @@
 on voudrait deep copy le plateau entier pour placer un mur sur la copie 'fantome' temporaire pour faire le bfs sur un plateau futur avec le mur placé mais ca coute trop cher c'est nul dommage
+on s est chié sur la fonction d evaluatio  a* donc les joueurs voulaient le chemin le plus long
 
+
+on appelait alpha beta avec les mauvais arguments il faut toujours l appeler avec true
+donc les 2 bots souhaitaient aider joueur 1
+
+probleme : le temps pour profondeur supérieur a 1 fait souffrir
+a peu pres une centaine de move possiblr par tour

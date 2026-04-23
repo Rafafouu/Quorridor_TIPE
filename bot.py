@@ -80,9 +80,15 @@ class AStarBot(Joueur):
 
 
 class AlphaStarBot(Joueur):
-   
     
     def play(self):
-        eval, act = alpha_beta(eval_a_star,self.plateau,1, -float("inf"),float("inf"),self,True)
+        eval, act = alpha_beta(eval_a_star,self.plateau,2, -float("inf"),float("inf"),self,True)
+        self.plateau.apply_action(self,act)
+        return True
+    
+class AlphaManhattanBot(Joueur): 
+
+    def play(self):
+        eval, act = alpha_beta(eval_manhattan,self.plateau,2, -float("inf"),float("inf"),self,True)
         self.plateau.apply_action(self,act)
         return True
