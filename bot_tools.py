@@ -73,7 +73,6 @@ def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int,
         current = joueur
         value = -float("inf")   
         liste_actions = plateau.get_all_legal_actions(current)
-        print(liste_actions)
         if not liste_actions:
             print("pas d actions dispo, looser")
 
@@ -98,7 +97,6 @@ def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int,
         current = joueur.plateau.get_other_player(joueur)
         value = float("inf")
         liste_actions = plateau.get_all_legal_actions(current)
-        print(liste_actions)
         if not liste_actions:
             print("pas d actions dispo, looser")
 
@@ -122,4 +120,4 @@ def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int,
 
 
 def eval_a_star(joueur : Joueur):
-        return len(a_star_shortest_path(joueur)) - len(a_star_shortest_path(joueur.plateau.get_other_player(joueur)))
+        return -len(a_star_shortest_path(joueur)) + len(a_star_shortest_path(joueur.plateau.get_other_player(joueur))) 
