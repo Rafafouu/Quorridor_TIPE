@@ -125,3 +125,4 @@ def eval_a_star(joueur : Joueur):
 def eval_manhattan(joueur: Joueur):
     other = joueur.plateau.get_other_player(joueur)
     return -manhattan_distance_to_goal(joueur.case,joueur) + manhattan_distance_to_goal(other.case,other)
+

@@ -8,30 +8,11 @@ class RandomMoveBot(Joueur):
     def play(self):
         return self.try_move(random.choice(self.plateau.get_accessible_cases(self)))
 
-
-#place toutes ses barrieres au hasard puis bouge au hasard
 class RandomBot(Joueur):
-
-    def place_random_barrier(self):
-        i, j =  random.randint(0, self.plateau.dim-1), random.randint(0, self.plateau.dim-1),
-        is_vertical = random.choice([True, False])
-
-        ok = self.try_place_wall(i, j, is_vertical)
-        while not ok:
-
-            i, j =  random.randint(0, self.plateau.dim-1), random.randint(0, self.plateau.dim-1),
-            is_vertical = random.choice([True, False])
-
-            ok = self.try_place_wall(i, j, is_vertical)
-        
-        return ok
-
     def play(self):
-        if self.barrieres > 0:
-            return self.place_random_barrier()
-        else:
-            return self.try_move(random.choice(self.plateau.get_accessible_cases(self)))
-        
+        liste_actions = self.plateau.get_all_legal_actions(self)
+        self.plateau.apply_action(self,random.choice(liste_actions))
+        return True
 
 class HumanBot(Joueur):
     def play(self):
@@ -89,6 +70,6 @@ class AlphaStarBot(Joueur):
 class AlphaManhattanBot(Joueur): 
 
     def play(self):
-        eval, act = alpha_beta(eval_manhattan,self.plateau,2, -float("inf"),float("inf"),self,True)
+        eval, act = alpha_beta(eval_manhattan,self.plateau,1, -float("inf"),float("inf"),self,True)
         self.plateau.apply_action(self,act)
         return True

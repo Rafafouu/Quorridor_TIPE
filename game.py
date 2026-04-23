@@ -139,7 +139,7 @@ class Plateau :
         return True
     
     def can_finish_BFS(self,joueur):
-        vu = []
+        vu = set()
         case = joueur.case
         file = [case]
         while file :
@@ -150,7 +150,7 @@ class Plateau :
             if case in joueur.goal:
                 return True
             if case not in vu : 
-                vu.append(case)
+                vu.add(case)
                 if case.up:
                     file.append(case.up)
                 if case.down:

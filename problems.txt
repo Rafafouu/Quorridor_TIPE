@@ -7,3 +7,5 @@ donc les 2 bots souhaitaient aider joueur 1
 
 probleme : le temps pour profondeur supérieur a 1 fait souffrir
 a peu pres une centaine de move possiblr par tour
+
+probleme : BFS nul
