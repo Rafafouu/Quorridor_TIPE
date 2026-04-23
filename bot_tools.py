@@ -67,12 +67,13 @@ def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int,
     
     """
     if profondeur ==  0 :
-        return (eval(Plateau,joueur),None)   #cas de base
+        return (eval(joueur),None)   #cas de base
     
     if maxi :   #tour de joueur 
         current = joueur
         value = -float("inf")   
         liste_actions = plateau.get_all_legal_actions(current)
+        print(liste_actions)
         if not liste_actions:
             print("pas d actions dispo, looser")
 
@@ -94,9 +95,10 @@ def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int,
         return value,best
 
     else :  #tour de other player 
-        current = Plateau.get_other_player(joueur)
+        current = joueur.plateau.get_other_player(joueur)
         value = float("inf")
-        liste_actions = plateau.get_all_legal_actions()
+        liste_actions = plateau.get_all_legal_actions(current)
+        print(liste_actions)
         if not liste_actions:
             print("pas d actions dispo, looser")
 
@@ -111,8 +113,13 @@ def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int,
                 value = score
                 best = act
 
-            alpha = min(beta,value)
+            beta = min(beta,value)
             if beta<=alpha :
                 break
 
         return value,best
+
+
+
+def eval_a_star(joueur : Joueur):
+        return len(a_star_shortest_path(joueur)) - len(a_star_shortest_path(joueur.plateau.get_other_player(joueur)))

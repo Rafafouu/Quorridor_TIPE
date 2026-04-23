@@ -87,6 +87,9 @@ class Action:
         self.i = i
         self.j = j
         self.is_vertical = is_vertical  
+    
+    def __repr__(self):
+        return str(self.type)+ str(self.destination) + str(self.i)+str(self.j)+str(self.is_vertical)
 
 
 class Plateau :
@@ -344,10 +347,10 @@ class Plateau :
             joueur.case = back_action #old_case
 
         elif back_type == "WALL":
-            joueur.barriere += 1
+            joueur.barrieres += 1
 
-        for case, attr, val in back_action: #juste repris de is_wall_legal
-            setattr(case, attr, val)
+            for case, attr, val in back_action: #juste repris de is_wall_legal
+                setattr(case, attr, val)
 
 
 

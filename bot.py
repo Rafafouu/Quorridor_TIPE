@@ -78,4 +78,11 @@ class AStarBot(Joueur):
             return self.try_move(path[0])
         return False
 
-        
+
+class AlphaStarBot(Joueur):
+   
+    
+    def play(self):
+        eval, act = alpha_beta(eval_a_star,self.plateau,1, -float("inf"),float("inf"),self,self==self.plateau.j1)
+        self.plateau.apply_action(self,act)
+        return True
