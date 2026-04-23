@@ -3,8 +3,8 @@ from bot import *
 import time
 
 plateau = Plateau(9)
-j1 = RandomBot(plateau.board[8][4], [case for case in plateau.board[0]], plateau)
-j2 = RandomBot(plateau.board[0][4], [case for case in plateau.board[8]], plateau)
+j1 = AlphaManhattanBot(plateau.board[8][4], [case for case in plateau.board[0]], plateau)
+j2 = AlphaManhattanBot(plateau.board[0][4], [case for case in plateau.board[8]], plateau)
 plateau.add_players(j1, j2)
 
 

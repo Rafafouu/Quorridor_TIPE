@@ -73,13 +73,12 @@ def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int,
         current = joueur
         value = -float("inf")   
         liste_actions = plateau.get_all_legal_actions(current)
-        print(liste_actions)
+        
         if not liste_actions:
             print("pas d actions dispo, looser")
 
         for act in liste_actions : 
             backup = plateau.apply_action(current, act)
-            
             score,coup = alpha_beta(eval,plateau,profondeur - 1, alpha,beta,joueur,False)
 
             plateau.undo_action(current,backup)
@@ -98,7 +97,6 @@ def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int,
         current = joueur.plateau.get_other_player(joueur)
         value = float("inf")
         liste_actions = plateau.get_all_legal_actions(current)
-        print(liste_actions)
         if not liste_actions:
             print("pas d actions dispo, looser")
 
@@ -122,4 +120,8 @@ def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int,
 
 
 def eval_a_star(joueur : Joueur):
-        return len(a_star_shortest_path(joueur)) - len(a_star_shortest_path(joueur.plateau.get_other_player(joueur)))
+        return -len(a_star_shortest_path(joueur)) + len(a_star_shortest_path(joueur.plateau.get_other_player(joueur))) 
+
+def eval_manhattan(joueur: Joueur):
+    other = joueur.plateau.get_other_player(joueur)
+    return -manhattan_distance_to_goal(joueur.case,joueur) + manhattan_distance_to_goal(other.case,other)
