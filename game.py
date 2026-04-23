@@ -1,3 +1,5 @@
+from collections import deque
+
 BARRIERE_START = 10
 
 
@@ -141,12 +143,13 @@ class Plateau :
     def can_finish_BFS(self,joueur):
         vu = set()
         case = joueur.case
-        file = [case]
+        file = deque()
+        file.append(case)
         while file :
             if not case:
                 continue
             
-            case = file.pop(0)
+            case = file.popleft()
             if case in joueur.goal:
                 return True
             if case not in vu : 

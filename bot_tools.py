@@ -1,11 +1,6 @@
 from game import *
 import heapq
 
-#tu veux juste pas coder comme si t avais une pile parce que devoir dire qu on importe une bibliothèque juste
-#pour des piles et files je trouve ca con
-
-
-
 def manhattan_distance_to_goal(case, player):
     return min([abs(case.row - goal_case.row) + abs(case.col - goal_case.col) for goal_case in player.goal])
 
@@ -116,8 +111,6 @@ def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int,
                 break
 
         return value,best
-
-
 
 def eval_a_star(joueur : Joueur):
         return -len(a_star_shortest_path(joueur)) + len(a_star_shortest_path(joueur.plateau.get_other_player(joueur))) 
