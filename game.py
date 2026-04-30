@@ -1,7 +1,7 @@
 from collections import deque
+import heapq
 
 BARRIERE_START = 10
-
 
 class Case :
 
@@ -75,6 +75,49 @@ class Joueur:
             self.plateau.place_wall(i, j, is_vertical)
         
         return result
+
+
+    def a_star_shortest_path(self):
+        start = self.case
+        
+        #TODO
+        #ON DEVRAIT NE PAS CONSIDERER L'AUTRE JOUEUR POUR LA VERIFICATION MAIS QUAND MEME LE FAIRE POUR LA FONCTION D'EVAL
+        #ET AUSSI A REMPLACER PAR LE DFS HEURISTIQUE CHELOU
+
+
+        # chaque element = (f, g, current, path_taken)
+        # g = distance entre départ et current
+        # f = g + h (Manhattan distance)
+        
+        priority_queue = [(0 + manhattan_distance_to_goal(start, self), 0, start, [])]
+        visited = {
+            start: 0
+        }
+
+        while len(priority_queue) > 0:
+            f, g, current, path = heapq.heappop(priority_queue)
+
+            if current in self.goal:
+                return path
+
+            neighbors = []
+
+
+            if g == 0: #si c'est le premier tour faut prendre en compte la position de l'adversaire
+                neighbors = self.plateau.get_accessible_cases(self)
+            else: #on s'occupe pas du joueur adverse psk tfacon il va bouger
+                if current.up: neighbors.append(current.up)
+                if current.down: neighbors.append(current.down)
+                if current.left: neighbors.append(current.left)
+                if current.right: neighbors.append(current.right)
+
+            for neighbor in neighbors:
+                if neighbor not in visited or g + 1 < visited[neighbor]: #on update le voisin si on trouve un chemin plus court vers lui
+                    visited[neighbor] = g + 1
+                    h = manhattan_distance_to_goal(neighbor, self)
+                    heapq.heappush(priority_queue, (g + 1 + h, g + 1, neighbor, path + [neighbor]))
+        
+        return None #aucun chemin
 
     def play(self):
         print("OVERWRITE THIS PLZ")
@@ -312,7 +355,6 @@ class Plateau :
         
         return list(set(l))
 
-
     def get_all_legal_actions(self, joueur):
         actions = []
         
@@ -321,14 +363,37 @@ class Plateau :
             
         
         if joueur.barrieres > 0:
+
+            player_path = set(joueur.a_star_shortest_path())
+            other_path = set(self.get_other_player(joueur).a_star_shortest_path())
+
+            paths = player_path | other_path
+
             for i in range(self.dim):
                 for j in range(self.dim):
                     
-                    if self.is_wall_legal(i, j, is_vertical=False):
-                        actions.append(Action("WALL", i=i, j=j, is_vertical=False))
-                   
-                    if self.is_wall_legal(i, j, is_vertical=True):
-                        actions.append(Action("WALL", i=i, j=j, is_vertical=True))
+                    case = self.board[i][j]
+
+                    for b in [True, False]:
+
+                        if not self.can_wall(i, j, b):
+                            continue
+
+                        case2 = None
+
+                        if b: #vertical
+                            case2 = self.board[i+1][j]
+                        else:
+                            case2 = self.board[i][j+1]
+
+                        if case in paths or case2 in paths:
+                            if self.is_wall_legal(i, j, is_vertical=b):
+                                actions.append(Action("WALL", i=i, j=j, is_vertical=b))
+                        
+                        else:
+                            actions.append(Action("WALL", i=i, j=j, is_vertical=b))
+                                
+
                         
         return actions
 
@@ -359,3 +424,5 @@ class Plateau :
 
 
 
+def manhattan_distance_to_goal(case, player):
+    return min([abs(case.row - goal_case.row) + abs(case.col - goal_case.col) for goal_case in player.goal])

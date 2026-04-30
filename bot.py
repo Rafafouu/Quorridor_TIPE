@@ -54,7 +54,7 @@ class HumanBot(Joueur):
 
 class AStarBot(Joueur):
     def play(self):
-        path = a_star_shortest_path(self)
+        path = self.a_star_shortest_path()
         if path:
             return self.try_move(path[0])
         return False
@@ -63,7 +63,8 @@ class AStarBot(Joueur):
 class AlphaStarBot(Joueur):
     
     def play(self):
-        eval, act = alpha_beta(eval_a_star,self.plateau,2, -float("inf"),float("inf"),self,True)
+        eval, act = alpha_beta(eval_a_star,self.plateau, 2, -float("inf"),float("inf"),self,True)
+        print(act)
         self.plateau.apply_action(self,act)
         return True
     
