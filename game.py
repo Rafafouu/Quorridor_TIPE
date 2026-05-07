@@ -64,20 +64,7 @@ class Joueur:
             return True
         return False
     
-    def try_place_wall(self, i, j, is_vertical=False):
-        
-        if self.barrieres <= 0:
-            return False
-
-        result = self.plateau.is_wall_legal(i, j, is_vertical)
-        if result:
-            self.barrieres -= 1
-            self.plateau.place_wall(i, j, is_vertical)
-        
-        return result
-
-
-    def a_star_shortest_path(self):
+    def dfs_shortest_path(self):
         start = self.case
         
         #TODO
@@ -89,7 +76,7 @@ class Joueur:
         # g = distance entre départ et current
         # f = g + h (Manhattan distance)
         
-        priority_queue = [(0 + manhattan_distance_to_goal(start, self), 0, start, [])]
+        priority_queue = [(manhattan_distance_to_goal(start, self), 0, start, [])]
         visited = {
             start: 0
         }
@@ -118,6 +105,21 @@ class Joueur:
                     heapq.heappush(priority_queue, (g + 1 + h, g + 1, neighbor, path + [neighbor]))
         
         return None #aucun chemin
+    
+    def try_place_wall(self, i, j, is_vertical=False):
+        
+        if self.barrieres <= 0:
+            return False
+
+        result = self.plateau.is_wall_legal(i, j, is_vertical)
+        if result:
+            self.barrieres -= 1
+            self.plateau.place_wall(i, j, is_vertical)
+        
+        return result
+
+
+    
 
     def play(self):
         print("OVERWRITE THIS PLZ")
@@ -364,8 +366,8 @@ class Plateau :
         
         if joueur.barrieres > 0:
 
-            player_path = set(joueur.a_star_shortest_path())
-            other_path = set(self.get_other_player(joueur).a_star_shortest_path())
+            player_path = set(joueur.dfs_shortest_path())
+            other_path = set(self.get_other_player(joueur).dfs_shortest_path())
 
             paths = player_path | other_path
 
