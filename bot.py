@@ -74,3 +74,14 @@ class AlphaManhattanBot(Joueur):
         eval, act = alpha_beta(eval_manhattan,self.plateau,1, -float("inf"),float("inf"),self,True)
         self.plateau.apply_action(self,act)
         return True
+
+
+class AlphaStarLessMoveBot(Joueur):
+    
+    def play(self):
+        eval, act = alpha_beta_less_move(eval_a_star,self.plateau, 3, -float("inf"),float("inf"),self,True,True)
+        print(act)
+        self.plateau.apply_action(self,act)
+        return True
+    
+

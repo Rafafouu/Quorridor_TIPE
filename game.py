@@ -397,6 +397,47 @@ class Plateau :
                         
         return actions
 
+    def get_less_legal_actions(self,joueur):
+        actions = []
+        other_player = self.get_other_player(joueur)
+        for dest_case in self.get_accessible_cases(joueur):
+            actions.append(Action("MOVE", dest_case))
+
+        if joueur.barrieres > 0:
+
+            player_path = set(joueur.a_star_shortest_path())
+            other_path = set(other_player.a_star_shortest_path())
+
+            paths = player_path | other_path
+
+            for i in range(self.dim):
+                for j in range(min(joueur.case.col -1,other_player.case.col -1), max(joueur.case.col +1,other_player.case.col +1)):
+                    
+                    case = self.board[i][j]
+
+                    for b in [True, False]:
+
+                        if not self.can_wall(i, j, b):
+                            continue
+
+                        case2 = None
+
+                        if b: #vertical
+                            case2 = self.board[i+1][j]
+                        else:
+                            case2 = self.board[i][j+1]
+
+                        if case in paths or case2 in paths:
+                            if self.is_wall_legal(i, j, is_vertical=b):
+                                actions.append(Action("WALL", i=i, j=j, is_vertical=b))
+                        
+                        else:
+                            actions.append(Action("WALL", i=i, j=j, is_vertical=b))
+                                
+
+
+        return actions
+
     def apply_action(self, joueur, action):
         if action.type == "MOVE":
             old_case = joueur.case
