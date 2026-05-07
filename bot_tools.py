@@ -81,11 +81,6 @@ def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int,
 
 def a_star_shortest_path(joueur):
         start = joueur.case
-        
-        #TODO
-        #ON DEVRAIT NE PAS CONSIDERER L'AUTRE JOUEUR POUR LA VERIFICATION MAIS QUAND MEME LE FAIRE POUR LA FONCTION D'EVAL
-        #ET AUSSI A REMPLACER PAR LE DFS HEURISTIQUE CHELOU
-
 
         # chaque element = (f, g, current, path_taken)
         # g = distance entre départ et current
@@ -108,10 +103,7 @@ def a_star_shortest_path(joueur):
             if g == 0: #si c'est le premier tour faut prendre en compte la position de l'adversaire
                 neighbors = joueur.plateau.get_accessible_cases(joueur)
             else: #on s'occupe pas du joueur adverse psk tfacon il va bouger
-                if current.up: neighbors.append(current.up)
-                if current.down: neighbors.append(current.down)
-                if current.left: neighbors.append(current.left)
-                if current.right: neighbors.append(current.right)
+                neighbors = current.get_accessible_neighbors()
 
             for neighbor in neighbors:
                 if neighbor not in visited or g + 1 < visited[neighbor]: #on update le voisin si on trouve un chemin plus court vers lui
@@ -123,7 +115,26 @@ def a_star_shortest_path(joueur):
 
 
 def eval_a_star(joueur : Joueur):
-        return -len(a_star_shortest_path(joueur)) + len(a_star_shortest_path(joueur.plateau.get_other_player(joueur))) 
+        
+        if joueur.case in joueur.goal:
+            return +1000000000
+        
+        other = joueur.plateau.get_other_player(joueur)
+        if other.case in other.goal:
+            return -1000000000
+
+        j_path = joueur.a_star_shortest_physical_path()
+        other_path = other.a_star_shortest_physical_path()
+
+        print(joueur, " longueur chemin : ", (len(j_path) if j_path is not None else "infini"))
+        print(other, " longueur chemin : ", (len(other_path) if other_path is not None else "infini"))
+
+        if j_path is None:
+            return -100000000000
+        if other_path is None:
+            return +100000000000
+
+        return -len(j_path) + len(other_path) 
 
 def eval_manhattan(joueur: Joueur):
     other = joueur.plateau.get_other_player(joueur)
