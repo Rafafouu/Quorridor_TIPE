@@ -88,7 +88,7 @@ class Joueur:
         # g = distance entre départ et current
         # f = g + h (Manhattan distance)
         
-        priority_queue = [(0 + manhattan_distance_to_goal(start, self), 0, start, [])]
+        priority_queue = [(0 + manhattan_distance_to_goal(start, self), 0, start, [start])]
         visited = {
             start: 0
         }
