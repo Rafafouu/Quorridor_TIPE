@@ -3,7 +3,7 @@ from bot import *
 import time
 
 plateau = Plateau(9)
-j1 = AlphaStarBot(plateau.board[8][4], [case for case in plateau.board[0]], plateau) #ROUGE
+j1 = AStarBot(plateau.board[8][4], [case for case in plateau.board[0]], plateau) #ROUGE
 j2 = AlphaStarBot(plateau.board[0][4], [case for case in plateau.board[8]], plateau) #BLEU
 plateau.add_players(j1, j2)
 

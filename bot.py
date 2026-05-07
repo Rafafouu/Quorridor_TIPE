@@ -54,7 +54,7 @@ class HumanBot(Joueur):
 
 class AStarBot(Joueur):
     def play(self):
-        path = self.a_star_shortest_path()
+        path = a_star_shortest_path(self)
         if path:
             return self.try_move(path[0])
         return False

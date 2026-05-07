@@ -78,7 +78,7 @@ def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int,
         return value,best
 
 
-
+#TODO verifier les g=0 c'est probablement des 1 surement
 def a_star_shortest_path(joueur):
         start = joueur.case
 
@@ -86,7 +86,7 @@ def a_star_shortest_path(joueur):
         # g = distance entre départ et current
         # f = g + h (Manhattan distance)
         
-        priority_queue = [(0 + manhattan_distance_to_goal(start, joueur), 0, start, [])]
+        priority_queue = [(0 + manhattan_distance_to_goal(start, joueur), 0, start, [start])]
         visited = {
             start: 0
         }
@@ -127,9 +127,9 @@ def eval_a_star(joueur : Joueur):
         other_path = other.a_star_shortest_physical_path()
 
         if j_path is None:
-            return -100000000000
+            return -100000
         if other_path is None:
-            return +100000000000
+            return +100000
 
         return -len(j_path) + len(other_path) 
 
