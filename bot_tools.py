@@ -24,6 +24,11 @@ def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int,
     renvoie : un couple (score, meilleur coup)
     
     """
+    if plateau.game_ended() :
+        print("la game est fini clanker, pas besoin de chercher")
+        return (eval(joueur),None)
+    
+
     if profondeur ==  0 :
         return (eval(joueur),None)   #cas de base
     
@@ -125,9 +130,6 @@ def eval_a_star(joueur : Joueur):
 
         j_path = joueur.a_star_shortest_physical_path()
         other_path = other.a_star_shortest_physical_path()
-
-        print(joueur, " longueur chemin : ", (len(j_path) if j_path is not None else "infini"))
-        print(other, " longueur chemin : ", (len(other_path) if other_path is not None else "infini"))
 
         if j_path is None:
             return -100000000000

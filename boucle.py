@@ -12,7 +12,6 @@ current_player = j1
 while not plateau.game_ended():
     print(plateau)
     print(current_player.play())
-    time.sleep(0.3)
     current_player = plateau.get_other_player(current_player)
 
 print(plateau)

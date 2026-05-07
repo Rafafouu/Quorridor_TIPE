@@ -437,8 +437,8 @@ class Plateau :
 
         if joueur.barrieres > 0:
 
-            player_path = set(joueur.a_star_shortest_path())
-            other_path = set(other_player.a_star_shortest_path())
+            player_path = set(joueur.a_star_shortest_physical_path())
+            other_path = set(self.get_other_player(joueur).a_star_shortest_physical_path())
 
             paths = player_path | other_path
 
