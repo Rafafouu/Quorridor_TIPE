@@ -47,6 +47,21 @@ class Case :
         }
 
         return mapping.get((l, r, u, d), "?")
+    
+    def get_accessible_neighbors(self):
+        voisins = []
+
+        if self.left:
+            voisins.append(self.left)
+        if self.right:
+            voisins.append(self.right)
+        if self.up:
+            voisins.append(self.up)
+        if self.down:
+            voisins.append(self.down)
+        
+        return voisins
+
 
 
 #faire inhéritance de classe pour créer des joueurs aux comportements différents
@@ -64,26 +79,10 @@ class Joueur:
             return True
         return False
     
-    def try_place_wall(self, i, j, is_vertical=False):
-        
-        if self.barrieres <= 0:
-            return False
-
-        result = self.plateau.is_wall_legal(i, j, is_vertical)
-        if result:
-            self.barrieres -= 1
-            self.plateau.place_wall(i, j, is_vertical)
-        
-        return result
 
 
-    def a_star_shortest_path(self):
+    def a_star_shortest_physical_path(self): #NE PREND PAS EN COMPTE L'AUTRE JOUEUR
         start = self.case
-        
-        #TODO
-        #ON DEVRAIT NE PAS CONSIDERER L'AUTRE JOUEUR POUR LA VERIFICATION MAIS QUAND MEME LE FAIRE POUR LA FONCTION D'EVAL
-        #ET AUSSI A REMPLACER PAR LE DFS HEURISTIQUE CHELOU
-
 
         # chaque element = (f, g, current, path_taken)
         # g = distance entre départ et current
@@ -100,16 +99,7 @@ class Joueur:
             if current in self.goal:
                 return path
 
-            neighbors = []
-
-
-            if g == 0: #si c'est le premier tour faut prendre en compte la position de l'adversaire
-                neighbors = self.plateau.get_accessible_cases(self)
-            else: #on s'occupe pas du joueur adverse psk tfacon il va bouger
-                if current.up: neighbors.append(current.up)
-                if current.down: neighbors.append(current.down)
-                if current.left: neighbors.append(current.left)
-                if current.right: neighbors.append(current.right)
+            neighbors = current.get_accessible_neighbors()
 
             for neighbor in neighbors:
                 if neighbor not in visited or g + 1 < visited[neighbor]: #on update le voisin si on trouve un chemin plus court vers lui
@@ -118,6 +108,24 @@ class Joueur:
                     heapq.heappush(priority_queue, (g + 1 + h, g + 1, neighbor, path + [neighbor]))
         
         return None #aucun chemin
+
+
+
+    
+    def try_place_wall(self, i, j, is_vertical=False):
+        
+        if self.barrieres <= 0:
+            return False
+
+        result = self.plateau.is_wall_legal(i, j, is_vertical)
+        if result:
+            self.barrieres -= 1
+            self.plateau.place_wall(i, j, is_vertical)
+        
+        return result
+
+
+    
 
     def play(self):
         print("OVERWRITE THIS PLZ")
@@ -205,7 +213,31 @@ class Plateau :
                     file.append(case.right)
                 if case.left:
                     file.append(case.left)
-        return False 
+        return False
+    
+    def can_finish_dfs(self, joueur):
+        start = joueur.case
+        visited = set()
+        pile = [start]
+
+        while len(pile) > 0:
+            current = pile.pop()
+
+            if current in visited:
+                continue
+
+            visited.add(current)
+
+            if current in joueur.goal:
+                return True
+            
+            voisins = sorted(current.get_accessible_neighbors(), key=lambda v: manhattan_distance_to_goal(v, joueur), reverse=True)
+
+            for v in voisins:
+                if v not in visited:
+                    pile.append(v)
+        
+        return False
 
 
     def save_and_cut(self,saved,case, direction):
@@ -234,8 +266,8 @@ class Plateau :
             self.save_and_cut(saved, self.board[i+1][j-1], "right")
 
         legal = (
-            self.can_finish_BFS(self.j1)
-            and self.can_finish_BFS(self.j2)
+            self.can_finish_dfs(self.j1)
+            and self.can_finish_dfs(self.j2)
         )
 
         for case, attr, val in saved:
@@ -355,7 +387,7 @@ class Plateau :
         
         return list(set(l))
 
-    def get_all_legal_actions(self, joueur):
+    def get_all_legal_actions(self, joueur : Joueur):
         actions = []
         
         for dest_case in self.get_accessible_cases(joueur):
@@ -364,8 +396,8 @@ class Plateau :
         
         if joueur.barrieres > 0:
 
-            player_path = set(joueur.a_star_shortest_path())
-            other_path = set(self.get_other_player(joueur).a_star_shortest_path())
+            player_path = set(joueur.a_star_shortest_physical_path())
+            other_path = set(self.get_other_player(joueur).a_star_shortest_physical_path())
 
             paths = player_path | other_path
 
