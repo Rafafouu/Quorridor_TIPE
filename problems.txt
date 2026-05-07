@@ -13,3 +13,23 @@ faire moins de BFS
 considérer moins de murs 
 regler bug barrière
 
+
+07/05
+
+bug pour trouver le chemin de chaque joueur, nouvel algo spécialement pour ca
+alpha beta qui prend moins de coup legaux en compte,
+permet de se questionnner si il est plus utile d aller + loin en profondeur ou de prendre vraiment un max de coup a chaque etage
+
+╔ ═ ═ ═ ═ ═ ═ ═ ╡ 
+║ ╞ ═ ╦ ╗ ╔ ╦ ╦ ╗ 
+║ ╥ ╥ ╠ ╣ ╠ ╬ ╬ ╣ 
+╠ ╣ ║ ╠ ╬ ╬ ╬ ╬ ╣ 
+╠ ╣ ╚ ╩ ╬ ╬ ╬ ╬ ╣ 
+╠ ╣ ╥ ╞ ╩ ╩ ╩ 🔴╣ 
+╠ ╬ ╣ ╔ ═ 🔵═ ╩ ╣ 
+╠ ╬ ╩ ╝ ╔ ═ ═ ╦ ╣ 
+╚ ╩ ═ ╡ ╚ ═ ═ ╩ ╝ 
+
+rouge -> prend moins de move mais va plus loin en profondeur et ouvre son adversaire, c est un massacre sans précédent !
+(et apres ca crash parce qu on a des bugs mdr)
+
