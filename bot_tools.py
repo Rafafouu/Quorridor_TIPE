@@ -24,6 +24,11 @@ def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int,
     renvoie : un couple (score, meilleur coup)
     
     """
+    if plateau.game_ended() :
+        print("la game est fini clanker, pas besoin de chercher")
+        return (eval(joueur),None)
+    
+
     if profondeur ==  0 :
         return (eval(joueur),None)   #cas de base
     
