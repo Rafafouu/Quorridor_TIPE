@@ -126,9 +126,6 @@ def eval_a_star(joueur : Joueur):
         j_path = joueur.a_star_shortest_physical_path()
         other_path = other.a_star_shortest_physical_path()
 
-        print(joueur, " longueur chemin : ", (len(j_path) if j_path is not None else "infini"))
-        print(other, " longueur chemin : ", (len(other_path) if other_path is not None else "infini"))
-
         if j_path is None:
             return -100000000000
         if other_path is None:
