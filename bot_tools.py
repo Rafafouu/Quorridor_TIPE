@@ -25,7 +25,6 @@ def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int,
     
     """
     if plateau.game_ended() :
-        print("la game est fini clanker, pas besoin de chercher")
         return (eval(joueur),None)
     
 
@@ -36,8 +35,6 @@ def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int,
         current = joueur
         value = -float("inf")   
         liste_actions = plateau.get_all_legal_actions(current)
-        print(len(liste_actions ))
-        print()
         
         if not liste_actions:
             print("pas d actions dispo, looser")
@@ -62,6 +59,7 @@ def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int,
         current = joueur.plateau.get_other_player(joueur)
         value = float("inf")
         liste_actions = plateau.get_all_legal_actions(current)
+
         if not liste_actions:
             print("pas d actions dispo, looser")
 
@@ -100,7 +98,7 @@ def a_star_shortest_path(joueur):
             f, g, current, path = heapq.heappop(priority_queue)
 
             if current in joueur.goal:
-                return path
+                return path[1::] #on retourne le chemin sans la position de départ
 
             neighbors = []
 
@@ -131,12 +129,16 @@ def eval_a_star(joueur : Joueur):
         j_path = joueur.a_star_shortest_physical_path()
         other_path = other.a_star_shortest_physical_path()
 
-        if j_path is None:
+        """if j_path is None:
             return -100000
         if other_path is None:
-            return +100000
+            return +100000"""
 
-        return -len(j_path) + len(other_path) 
+        #on veut le plus haut score :
+        #on veut que NOTRE chemin soit petit, donc négatif pour que l'éval diminue s'il s'allonge
+        #on veut que le chemin de l'adversaire soit grand, donc positif pour que l'éval augmente s'il s'allonge
+        #pondéré comme ça c'est plus important d'avoir son propre chemin court (strat offensive)
+        return -1.5*len(j_path) + len(other_path) 
 
 def eval_manhattan(joueur: Joueur):
     other = joueur.plateau.get_other_player(joueur)
@@ -163,7 +165,6 @@ def alpha_beta_less_move(eval ,plateau : Plateau ,profondeur : int,alpha : int,b
     
     """
     if plateau.game_ended() :
-        print("la game est fini clanker, pas besoin de chercher")
         return (eval(joueur),None)
     
     if profondeur ==  0 :

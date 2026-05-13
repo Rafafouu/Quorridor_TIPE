@@ -14,10 +14,12 @@ class RandomBot(Joueur):
         self.plateau.apply_action(self,random.choice(liste_actions))
         return True
 
+
 class HumanBot(Joueur):
     def play(self):
+        pass
 
-        if self.barrieres > 0:
+        """if self.barrieres > 0:
             ans = int(input ("placer une barriere : 1 \n se déplacer : 2 \n votre choix : "))
             if ans == 1 : 
                 vert = int(input("entrez 1 si vous voulez une barrière verticale : "))
@@ -46,10 +48,10 @@ class HumanBot(Joueur):
                 print(str(i) + " : ", moves[i].row, moves[i].col)
             ans = int(input("choose your case : "))
             if ans > len(moves):
-                return self.play
+                return self.play()
             
             self.try_move(moves[ans])    
-            return True
+            return True"""
 
 
 class AStarBot(Joueur):
@@ -60,26 +62,39 @@ class AStarBot(Joueur):
         return False
 
 
-class AlphaStarBot(Joueur):
+
+
+
+class AlphaBotSkeleton(Joueur): #squelette de bot pour les alpha beta, c'est juste joueur avec un attribut hauteur en plus
+    def __init__(self, case, goal, plateau, hauteur):
+        super().__init__(case, goal, plateau)
+        self.hauteur = hauteur
+
+
+
+
+
+
+class AlphaStarBot(AlphaBotSkeleton):
     
     def play(self):
-        eval, act = alpha_beta(eval_a_star,self.plateau, 2, -float("inf"),float("inf"),self,True)
+        eval, act = alpha_beta(eval_a_star,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True)
         print(act)
         self.plateau.apply_action(self,act)
         return True
     
-class AlphaManhattanBot(Joueur): 
+class AlphaManhattanBot(AlphaBotSkeleton): 
 
     def play(self):
-        eval, act = alpha_beta(eval_manhattan,self.plateau,1, -float("inf"),float("inf"),self,True)
+        eval, act = alpha_beta(eval_manhattan,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True)
         self.plateau.apply_action(self,act)
         return True
 
 
-class AlphaStarLessMoveBot(Joueur):
+class AlphaStarLessMoveBot(AlphaBotSkeleton):
     
     def play(self):
-        eval, act = alpha_beta_less_move(eval_a_star,self.plateau, 3, -float("inf"),float("inf"),self,True,True)
+        eval, act = alpha_beta_less_move(eval_a_star,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True,True)
         print(act)
         self.plateau.apply_action(self,act)
         return True

@@ -1,0 +1,3 @@
+Faire un graphe du temps de réflexion du bot au fil de la partie (ex comparer AlphaStarBot contre AlphaStarLessMoveBot)
+
+Dire pour différentes tailles de plateau et profondeurs si j1 ou j2 est avantagé (mieux de commencer ou de réagir ?)

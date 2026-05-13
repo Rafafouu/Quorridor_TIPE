@@ -197,25 +197,19 @@ class Plateau :
         file = deque()
         file.append(case)
         while file :
+            case = file.popleft()
             if not case:
                 continue
             
-            case = file.popleft()
             if case in joueur.goal:
                 return True
-            if case not in vu : 
-                vu.add(case)
-                if case.up:
-                    file.append(case.up)
-                if case.down:
-                    file.append(case.down)
-                if case.right:
-                    file.append(case.right)
-                if case.left:
-                    file.append(case.left)
+            for v in [case.up, case.down, case.left, case.right]:
+                        if v and v not in vu:
+                            vu.add(v)
+                            file.append(v)
         return False
     
-    def can_finish_dfs(self, joueur):
+    def can_finish_dfs(self, joueur): #dfs smart qui sent l'odeur du goal hmm miam miam
         start = joueur.case
         visited = set()
         pile = [start]
@@ -235,6 +229,24 @@ class Plateau :
 
             for v in voisins:
                 if v not in visited:
+                    pile.append(v)
+        
+        return False
+
+    def can_finish_dumb_dfs(self, joueur): #dfs débile basique sans odorat
+        start = joueur.case
+        visited = {start} #set qui contient start 
+        pile = [start]
+
+        while pile:
+            current = pile.pop()
+
+            if current in joueur.goal:
+                return True
+
+            for v in current.get_accessible_neighbors():
+                if v not in visited:
+                    visited.add(current)
                     pile.append(v)
         
         return False
@@ -266,8 +278,8 @@ class Plateau :
             self.save_and_cut(saved, self.board[i+1][j-1], "right")
 
         legal = (
-            self.can_finish_dfs(self.j1)
-            and self.can_finish_dfs(self.j2)
+            self.can_finish_dumb_dfs(self.j1)
+            and self.can_finish_dumb_dfs(self.j2)
         )
 
         for case, attr, val in saved:
@@ -498,4 +510,4 @@ class Plateau :
 
 
 def manhattan_distance_to_goal(case, player):
-    return min([abs(case.row - goal_case.row) + abs(case.col - goal_case.col) for goal_case in player.goal])
+    return abs(case.row - player.goal[0].row)

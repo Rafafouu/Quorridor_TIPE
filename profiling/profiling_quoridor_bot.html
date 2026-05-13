@@ -1,0 +1,60 @@
+
+<div style="padding: 1rem 0;">
+  <h2 style="font-size: 18px; font-weight: 500; margin: 0 0 0.5rem;">Profiling — AlphaStarLessMoveBot, profondeur 3</h2>
+  <p style="font-size: 13px; color: var(--color-text-secondary); margin: 0 0 1.5rem;">Total : ~1 seconde · 2 588 434 appels de fonctions</p>
+
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.5rem;">
+    <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 1rem;">
+      <p style="font-size: 13px; color: var(--color-text-secondary); margin: 0 0 4px;">can_finish_dfs</p>
+      <p style="font-size: 22px; font-weight: 500; margin: 0; color: var(--color-text-danger);">60 %</p>
+      <p style="font-size: 12px; color: var(--color-text-secondary); margin: 4px 0 0;">8 316 appels</p>
+    </div>
+    <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 1rem;">
+      <p style="font-size: 13px; color: var(--color-text-secondary); margin: 0 0 4px;">a_star_shortest_path</p>
+      <p style="font-size: 22px; font-weight: 500; margin: 0; color: var(--color-text-warning);">31 %</p>
+      <p style="font-size: 12px; color: var(--color-text-secondary); margin: 4px 0 0;">3 634 appels</p>
+    </div>
+    <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 1rem;">
+      <p style="font-size: 13px; color: var(--color-text-secondary); margin: 0 0 4px;">sorted() dans DFS</p>
+      <p style="font-size: 22px; font-weight: 500; margin: 0; color: var(--color-text-secondary);">21 %</p>
+      <p style="font-size: 12px; color: var(--color-text-secondary); margin: 4px 0 0;">75 476 appels</p>
+    </div>
+  </div>
+
+  <div style="position: relative; width: 100%; height: 260px;">
+    <canvas id="chart" role="img" aria-label="Temps CPU par fonction : can_finish_dfs 60%, a_star 31%, sorted 21%, get_accessible_neighbors 15%, manhattan_distance 12%">can_finish_dfs prend 60% du temps CPU.</canvas>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 16px; margin-top: 8px; font-size: 12px; color: var(--color-text-secondary);">
+    <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#E24B4A;"></span>Critique</span>
+    <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#BA7517;"></span>Important</span>
+    <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#888780;"></span>Mineur</span>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script>
+    new Chart(document.getElementById('chart'), {
+      type: 'bar',
+      data: {
+        labels: ['can_finish_dfs', 'a_star_path', 'sorted() DFS', 'get_neighbors', 'manhattan_dist', 'is_wall_legal', 'get_less_legal'],
+        datasets: [{
+          label: '% du temps CPU',
+          data: [59.6, 31.1, 20.6, 14.8, 11.7, 9.8, 6.8],
+          backgroundColor: ['#E24B4A','#BA7517','#888780','#888780','#888780','#BA7517','#888780'],
+          borderRadius: 4,
+          borderSkipped: false,
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { max: 70, ticks: { callback: v => v + '%', color: '#888780', font: { size: 12 } }, grid: { color: 'rgba(136,135,128,0.15)' } },
+          y: { ticks: { color: '#888780', font: { size: 12 } }, grid: { display: false } }
+        }
+      }
+    });
+  </script>
+</div>
