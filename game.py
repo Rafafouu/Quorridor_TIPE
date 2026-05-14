@@ -168,27 +168,27 @@ class Plateau :
         self.j2 = j2
 
     #peut placer un mur PHYSIQUEMENT
-    def can_wall(self,i,j,is_vertical): 
+    def can_wall(self, i, j, is_vertical):
         if not is_vertical:
             
-            if i<1 or j>=self.dim - 1 :
-
+            if i < 1 or j >= self.dim - 1:
                 return False
-            if self.board[i][j].right ==None and self.board[i-1][j].right == None :
+           
+            if self.board[i][j].up is None or self.board[i][j+1].up is None:
                 return False
 
-            if self.board[i][j].up == None or self.board[i][j+1].up == None:
+            if j > 0 and self.board[i][j-1].up is None and self.board[i][j+1].up is None:
+                return False
+        else:
+            
+            if i >= self.dim - 1 or j < 1:
                 return False
             
-        else :
-            if i>= self.dim - 1 or j<1 : 
-
-                return False
-            if self.board[i][j].up == None and self.board[i][j-1].up == None :
-                return False
-            if self.board[i][j].left == None or self.board[i+1][j].left == None :
+            if self.board[i][j].left is None or self.board[i+1][j].left is None:
                 return False
             
+            if i > 0 and self.board[i-1][j].left is None and self.board[i+1][j].left is None:
+                return False
         return True
     
     def can_finish_BFS(self,joueur):
@@ -246,7 +246,7 @@ class Plateau :
 
             for v in current.get_accessible_neighbors():
                 if v not in visited:
-                    visited.add(current)
+                    visited.add(v)
                     pile.append(v)
         
         return False
@@ -435,7 +435,8 @@ class Plateau :
                                 actions.append(Action("WALL", i=i, j=j, is_vertical=b))
                         
                         else:
-                            actions.append(Action("WALL", i=i, j=j, is_vertical=b))
+                            if self.can_wall(i,j,b):
+                                actions.append(Action("WALL", i=i, j=j, is_vertical=b))
                                 
 
                         
@@ -476,7 +477,8 @@ class Plateau :
                                 actions.append(Action("WALL", i=i, j=j, is_vertical=b))
                         
                         else:
-                            actions.append(Action("WALL", i=i, j=j, is_vertical=b))
+                            if self.can_wall(i,j,b):
+                                actions.append(Action("WALL", i=i, j=j, is_vertical=b))
                                 
 
 

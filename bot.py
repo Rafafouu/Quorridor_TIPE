@@ -62,17 +62,10 @@ class AStarBot(Joueur):
         return False
 
 
-
-
-
 class AlphaBotSkeleton(Joueur): #squelette de bot pour les alpha beta, c'est juste joueur avec un attribut hauteur en plus
     def __init__(self, case, goal, plateau, hauteur):
         super().__init__(case, goal, plateau)
         self.hauteur = hauteur
-
-
-
-
 
 
 class AlphaStarBot(AlphaBotSkeleton):

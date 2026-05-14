@@ -1,9 +1,5 @@
 from game import *
 
-
-
-
-
 def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int, joueur : Joueur, maxi : bool):
     """
     on prend en paramètre : la fonction d'évaluation (logique)
