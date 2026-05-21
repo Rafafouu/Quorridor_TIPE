@@ -1,3 +1,7 @@
 Faire un graphe du temps de réflexion du bot au fil de la partie (ex comparer AlphaStarBot contre AlphaStarLessMoveBot)
 
 Dire pour différentes tailles de plateau et profondeurs si j1 ou j2 est avantagé (mieux de commencer ou de réagir ?)
+
+
+Un bot défensif perd contre un bot offensif (qu'il soit j1 ou j2) (a bas le stall)
+Les deux bots échangent de coté avant de commencer a bloquer
