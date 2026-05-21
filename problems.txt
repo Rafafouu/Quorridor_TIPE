@@ -33,3 +33,6 @@ permet de se questionnner si il est plus utile d aller + loin en profondeur ou d
 rouge -> prend moins de move mais va plus loin en profondeur et ouvre son adversaire, c est un massacre sans précédent !
 (et apres ca crash parce qu on a des bugs mdr)
 
+le bleu a l air bete mais en fait c est normal : il voit que si il bouge il va se faire bloquer et rallonger son chemin,
+ainsi il préfère ne pas bouger / faire des allers retours car sinon son chemin se rallonge et la pondération aide a le faire douter
+
