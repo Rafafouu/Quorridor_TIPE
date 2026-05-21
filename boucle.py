@@ -1,15 +1,16 @@
 from game import *
 from bot import *
 from render_pygame import QuoridorRenderer
-import time
 
-plateau = Plateau(9)
-j2 = AlphaStarLessMoveBot(plateau.board[8][4], [case for case in plateau.board[0]], plateau, 3) #ROUGE
-j1 = AlphaStarBot(plateau.board[0][4], [case for case in plateau.board[8]], plateau, 3) #BLEU
+dim = 5
+
+plateau = Plateau(dim)
+j1 = AlphaStarLessMoveBot(plateau.board[dim-1][dim // 2], [case for case in plateau.board[0]], plateau, 3) #ROUGE
+j2 = AlphaStarBot(plateau.board[0][dim // 2], [case for case in plateau.board[dim-1]], plateau, 3) #BLEU
 plateau.add_players(j1, j2)
 
 
-renderer = QuoridorRenderer(dim=9)
+renderer = QuoridorRenderer(dim=dim)
 renderer.run(plateau, j1, j2, plateau.game_ended)
 
 """current_player = j1
