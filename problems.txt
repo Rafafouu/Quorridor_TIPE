@@ -36,3 +36,5 @@ rouge -> prend moins de move mais va plus loin en profondeur et ouvre son advers
 le bleu a l air bete mais en fait c est normal : il voit que si il bouge il va se faire bloquer et rallonger son chemin,
 ainsi il préfère ne pas bouger / faire des allers retours car sinon son chemin se rallonge et la pondération aide a le faire douter
 
+coup brillant !! le mec a utilisé une barriere poir eviter l utilisation adverse d une barrière (vertical pour eviter horizontal)
+et lui laisser un chemin vers l arrivée
