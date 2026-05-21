@@ -152,6 +152,18 @@ def eval_stall(joueur: Joueur):
 
     return -len(j_path) + 2*len(other_path) + 0.1 * (joueur.barrieres - other.barrieres)
 
+def eval_aggresive(joueur: Joueur):
+    if joueur.case in joueur.goal:
+        return +1000000000
+        
+    other = joueur.plateau.get_other_player(joueur)
+    if other.case in other.goal:
+        return -1000000000
+
+    j_path = a_star_shortest_path(joueur)
+    other_path = a_star_shortest_path(other)
+
+    return -3*len(j_path) + len(other_path) + 2 * (joueur.barrieres - other.barrieres)
 
 
 
