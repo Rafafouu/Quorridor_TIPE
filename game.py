@@ -4,7 +4,7 @@ from importlib.resources import path
 
 BARRIERE_START = 10
 
-class Case :
+class Case : 
 
     def __lt__(self, other): #pour la heapq apparemment jsp
         return False
@@ -17,7 +17,7 @@ class Case :
         self.up = up
         self.down= down
     
-    def __repr__(self):
+    def __repr__(self): #sert plus trop
         l = self.left is not None
         r = self.right is not None
         u = self.up is not None
@@ -49,7 +49,7 @@ class Case :
 
         return mapping.get((l, r, u, d), "?")
     
-    def get_accessible_neighbors(self):
+    def get_accessible_neighbors(self): #avoir les voisins
         voisins = []
 
         if self.left:
@@ -170,58 +170,69 @@ class Plateau :
 
     #peut placer un mur PHYSIQUEMENT
     def can_wall(self, i, j, is_vertical):
-        """
-        Checks ONLY:
-        - bounds
-        - overlap with existing walls
-
-        Does NOT check path legality.
-        """
+        
 
         # -------------------------
-        # HORIZONTAL WALL
+        # HORIZONTAL
+        # blocks:
+        #
+        # (i-1,j)   <-> (i,j)
+        # (i-1,j+1) <-> (i,j+1)
         # -------------------------
+
         if not is_vertical:
 
-            # wall uses:
-            # (i,j) <-> up
-            # (i,j+1) <-> up
-
-            if i <= 0 or j < 0 or j >= self.dim - 1:
+            if i <= 0 or i >= self.dim:
                 return False
 
-            c1 = self.board[i][j]
-            c2 = self.board[i][j + 1]
-
-            # already cut => overlapping wall
-            if c1.up is None:
+            if j < 0 or j >= self.dim - 1:
                 return False
 
-            if c2.up is None:
+            # overlap
+            if self.board[i][j].up is None:
+                return False
+
+            if self.board[i][j+1].up is None:
+                return False
+
+            # crossing wall
+            # vertical centered on same intersection
+            if (
+                self.board[i][j+1].left is None
+                and self.board[i-1][j+1].left is None
+            ):
                 return False
 
             return True
 
         # -------------------------
-        # VERTICAL WALL
+        # VERTICAL
+        # blocks:
+        #
+        # (i,j-1) <-> (i,j)
+        # (i+1,j-1) <-> (i+1,j)
         # -------------------------
+
         else:
 
-            # wall uses:
-            # (i,j) <-> left
-            # (i+1,j) <-> left
-
-            if j <= 0 or i < 0 or i >= self.dim - 1:
+            if j <= 0 or j >= self.dim:
                 return False
 
-            c1 = self.board[i][j]
-            c2 = self.board[i + 1][j]
-
-            # already cut => overlapping wall
-            if c1.left is None:
+            if i < 0 or i >= self.dim - 1:
                 return False
 
-            if c2.left is None:
+            # overlap
+            if self.board[i][j].left is None:
+                return False
+
+            if self.board[i+1][j].left is None:
+                return False
+
+            # crossing wall
+            if (
+                self.board[i+1][j].up is None
+                and self.board[i+1][j-1].up is None
+            ):
                 return False
 
             return True
@@ -484,60 +495,44 @@ class Plateau :
                         
         return actions
 
-    def get_less_legal_actions(self,joueur):
+    def get_less_legal_actions(self, joueur):
         actions = []
+
         other_player = self.get_other_player(joueur)
 
+        # -----------------
+        # MOVES
+        # -----------------
 
         for dest_case in self.get_accessible_cases(joueur):
             actions.append(Action("MOVE", dest_case))
 
-        if joueur.barrieres > 0:
+        if joueur.barrieres <= 0:
+            return actions
 
-            player_path = joueur.a_star_shortest_physical_path()
-            other_path = self.get_other_player(joueur).a_star_shortest_physical_path()
+        # -----------------
+        # WALL SEARCH ZONE
+        # -----------------
 
-            player_edges = path_to_edges(player_path)
-            other_edges = path_to_edges(other_path)
-            path_edges = player_edges | other_edges
+        min_col = max(0, min(joueur.case.col, other_player.case.col) - 1)
+        max_col = min(self.dim - 1,
+                    max(joueur.case.col, other_player.case.col) + 1)
 
-            
+        for i in range(self.dim):
 
-            for i in range(self.dim):
-                for j in range(min(joueur.case.col -1,other_player.case.col -1), max(joueur.case.col +1,other_player.case.col +1)):
-                    
-                    case = self.board[i][j]
+            for j in range(min_col, max_col + 1):
 
-                    for b in [True, False]:
+                for b in [True, False]:
 
-                        if not self.can_wall(i, j, b):
-                            continue
-
-                        # get the 2 edges this wall would cut
-                        if not b:  # horizontal wall at (i,j): cuts up/down edges
-                            wall_edges = {
-                                (self.board[i][j],   self.board[i-1][j]),
-                                (self.board[i-1][j], self.board[i][j]),
-                                (self.board[i][j+1], self.board[i-1][j+1]),
-                                (self.board[i-1][j+1], self.board[i][j+1]),
-                            }
-                        else:  # vertical wall at (i,j): cuts left/right edges
-                            wall_edges = {
-                                (self.board[i][j],   self.board[i][j-1]),
-                                (self.board[i][j-1], self.board[i][j]),
-                                (self.board[i+1][j], self.board[i+1][j-1]),
-                                (self.board[i+1][j-1], self.board[i+1][j]),
-                            }
-
-                        if wall_edges & path_edges:
-                            # wall cuts a path edge — need full legality check
-                            if self.is_wall_legal(i, j, b):
-                                actions.append(Action("WALL", i=i, j=j, is_vertical=b))
-                        else:
-                            # wall doesn't touch any path edge — can_wall is enough
-                            actions.append(Action("WALL", i=i, j=j, is_vertical=b))
-                                
-
+                    if self.is_wall_legal(i, j, b):
+                        actions.append(
+                            Action(
+                                "WALL",
+                                i=i,
+                                j=j,
+                                is_vertical=b
+                            )
+                        )
 
         return actions
 
