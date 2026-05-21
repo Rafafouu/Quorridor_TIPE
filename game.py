@@ -170,27 +170,61 @@ class Plateau :
 
     #peut placer un mur PHYSIQUEMENT
     def can_wall(self, i, j, is_vertical):
+        """
+        Checks ONLY:
+        - bounds
+        - overlap with existing walls
+
+        Does NOT check path legality.
+        """
+
+        # -------------------------
+        # HORIZONTAL WALL
+        # -------------------------
         if not is_vertical:
-            
-            if i < 1 or j >= self.dim - 1:
-                return False
-        
-            if self.board[i][j].up is None or self.board[i][j+1].up is None:
+
+            # wall uses:
+            # (i,j) <-> up
+            # (i,j+1) <-> up
+
+            if i <= 0 or j < 0 or j >= self.dim - 1:
                 return False
 
-            if j > 0 and self.board[i][j-1].up is None:
+            c1 = self.board[i][j]
+            c2 = self.board[i][j + 1]
+
+            # already cut => overlapping wall
+            if c1.up is None:
                 return False
+
+            if c2.up is None:
+                return False
+
+            return True
+
+        # -------------------------
+        # VERTICAL WALL
+        # -------------------------
         else:
-            
-            if i >= self.dim - 1 or j < 1:
+
+            # wall uses:
+            # (i,j) <-> left
+            # (i+1,j) <-> left
+
+            if j <= 0 or i < 0 or i >= self.dim - 1:
                 return False
-            
-            if self.board[i][j].left is None or self.board[i+1][j].left is None:
+
+            c1 = self.board[i][j]
+            c2 = self.board[i + 1][j]
+
+            # already cut => overlapping wall
+            if c1.left is None:
                 return False
-            
-            if i > 0 and self.board[i-1][j].left is None:
+
+            if c2.left is None:
                 return False
-        return True
+
+            return True
     
     def can_finish_BFS(self,joueur):
         vu = set()
