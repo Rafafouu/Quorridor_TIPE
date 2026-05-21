@@ -122,8 +122,8 @@ def eval_a_star(joueur : Joueur):
         if other.case in other.goal:
             return -1000000000
 
-        j_path = joueur.a_star_shortest_physical_path()
-        other_path = other.a_star_shortest_physical_path()
+        j_path = a_star_shortest_path(joueur)
+        other_path = a_star_shortest_path(other)
 
         """if j_path is None:
             return -100000
@@ -147,8 +147,8 @@ def eval_stall(joueur: Joueur):
     if other.case in other.goal:
         return -1000000000
 
-    j_path = joueur.a_star_shortest_physical_path()
-    other_path = other.a_star_shortest_physical_path()
+    j_path = a_star_shortest_path(joueur)
+    other_path = a_star_shortest_path(other)
 
     return -len(j_path) + 2*len(other_path) + 0.1 * (joueur.barrieres - other.barrieres)
 
