@@ -2,7 +2,7 @@ from collections import deque
 import heapq
 from importlib.resources import path
 
-BARRIERE_START = 10
+BARRIERE_START = 5
 
 class Case : 
 

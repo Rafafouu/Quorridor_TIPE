@@ -20,8 +20,15 @@ def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int,
     renvoie : un couple (score, meilleur coup)
     
     """
-    if plateau.game_ended() :
-        return (eval(joueur),None)
+    if plateau.game_ended():
+
+        other = plateau.get_other_player(joueur)
+
+        if joueur.case in joueur.goal:
+            return (1000000000 + profondeur, None)
+
+        if other.case in other.goal:
+            return (-1000000000 - profondeur, None)
     
 
     if profondeur ==  0 :
@@ -122,8 +129,8 @@ def eval_a_star(joueur : Joueur):
         if other.case in other.goal:
             return -1000000000
 
-        j_path = a_star_shortest_path(joueur)
-        other_path = a_star_shortest_path(other)
+        j_path = joueur.a_star_shortest_physical_path()
+        other_path = other.a_star_shortest_physical_path()
 
         """if j_path is None:
             return -100000
@@ -147,8 +154,8 @@ def eval_stall(joueur: Joueur):
     if other.case in other.goal:
         return -1000000000
 
-    j_path = a_star_shortest_path(joueur)
-    other_path = a_star_shortest_path(other)
+    j_path = joueur.a_star_shortest_physical_path()
+    other_path = other.a_star_shortest_physical_path()
 
     return -len(j_path) + 2*len(other_path) + 0.1 * (joueur.barrieres - other.barrieres)
 
@@ -179,8 +186,15 @@ def alpha_beta_less_move(eval ,plateau : Plateau ,profondeur : int,alpha : int,b
     renvoie : un couple (score, meilleur coup)
     
     """
-    if plateau.game_ended() :
-        return (eval(joueur),None)
+    if plateau.game_ended():
+
+        other = plateau.get_other_player(joueur)
+
+        if joueur.case in joueur.goal:
+            return (1000000000 + profondeur, None)
+
+        if other.case in other.goal:
+            return (-1000000000 - profondeur, None)
     
     if profondeur ==  0 :
         return (eval(joueur),None)   #cas de base
