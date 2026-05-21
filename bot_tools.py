@@ -134,7 +134,26 @@ def eval_a_star(joueur : Joueur):
         #on veut que NOTRE chemin soit petit, donc négatif pour que l'éval diminue s'il s'allonge
         #on veut que le chemin de l'adversaire soit grand, donc positif pour que l'éval augmente s'il s'allonge
         #pondéré comme ça c'est plus important d'avoir son propre chemin court (strat offensive)
-        return -1.5*len(j_path) + len(other_path) 
+        return -1.5*len(j_path) + len(other_path) + 0.25 * (joueur.barrieres - other.barrieres)
+
+
+
+
+def eval_stall(joueur: Joueur):
+    if joueur.case in joueur.goal:
+        return +1000000000
+        
+    other = joueur.plateau.get_other_player(joueur)
+    if other.case in other.goal:
+        return -1000000000
+
+    j_path = joueur.a_star_shortest_physical_path()
+    other_path = other.a_star_shortest_physical_path()
+
+    return -len(j_path) + 2*len(other_path) + 0.1 * (joueur.barrieres - other.barrieres)
+
+
+
 
 def eval_manhattan(joueur: Joueur):
     other = joueur.plateau.get_other_player(joueur)
