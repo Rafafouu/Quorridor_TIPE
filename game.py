@@ -1,5 +1,6 @@
 from collections import deque
 import heapq
+from importlib.resources import path
 
 BARRIERE_START = 10
 
@@ -169,27 +170,61 @@ class Plateau :
 
     #peut placer un mur PHYSIQUEMENT
     def can_wall(self, i, j, is_vertical):
+        """
+        Checks ONLY:
+        - bounds
+        - overlap with existing walls
+
+        Does NOT check path legality.
+        """
+
+        # -------------------------
+        # HORIZONTAL WALL
+        # -------------------------
         if not is_vertical:
-            
-            if i < 1 or j >= self.dim - 1:
-                return False
-           
-            if self.board[i][j].up is None or self.board[i][j+1].up is None:
+
+            # wall uses:
+            # (i,j) <-> up
+            # (i,j+1) <-> up
+
+            if i <= 0 or j < 0 or j >= self.dim - 1:
                 return False
 
-            if j > 0 and self.board[i][j-1].up is None and self.board[i][j+1].up is None:
+            c1 = self.board[i][j]
+            c2 = self.board[i][j + 1]
+
+            # already cut => overlapping wall
+            if c1.up is None:
                 return False
+
+            if c2.up is None:
+                return False
+
+            return True
+
+        # -------------------------
+        # VERTICAL WALL
+        # -------------------------
         else:
-            
-            if i >= self.dim - 1 or j < 1:
+
+            # wall uses:
+            # (i,j) <-> left
+            # (i+1,j) <-> left
+
+            if j <= 0 or i < 0 or i >= self.dim - 1:
                 return False
-            
-            if self.board[i][j].left is None or self.board[i+1][j].left is None:
+
+            c1 = self.board[i][j]
+            c2 = self.board[i + 1][j]
+
+            # already cut => overlapping wall
+            if c1.left is None:
                 return False
-            
-            if i > 0 and self.board[i-1][j].left is None and self.board[i+1][j].left is None:
+
+            if c2.left is None:
                 return False
-        return True
+
+            return True
     
     def can_finish_BFS(self,joueur):
         vu = set()
@@ -398,7 +433,7 @@ class Plateau :
                         l.append(j_current.case.right.down)  
         
         return list(set(l))
-
+    
     def get_all_legal_actions(self, joueur : Joueur):
         actions = []
         
@@ -408,35 +443,42 @@ class Plateau :
         
         if joueur.barrieres > 0:
 
-            player_path = set(joueur.a_star_shortest_physical_path())
-            other_path = set(self.get_other_player(joueur).a_star_shortest_physical_path())
+            player_path = joueur.a_star_shortest_physical_path()
+            other_path = self.get_other_player(joueur).a_star_shortest_physical_path()
 
-            paths = player_path | other_path
+            player_edges = path_to_edges(player_path)
+            other_edges = path_to_edges(other_path)
+            path_edges = player_edges | other_edges
 
             for i in range(self.dim):
                 for j in range(self.dim):
-                    
-                    case = self.board[i][j]
-
                     for b in [True, False]:
-
                         if not self.can_wall(i, j, b):
                             continue
 
-                        case2 = None
+                        # get the 2 edges this wall would cut
+                        if not b:  # horizontal wall at (i,j): cuts up/down edges
+                            wall_edges = {
+                                (self.board[i][j],   self.board[i-1][j]),
+                                (self.board[i-1][j], self.board[i][j]),
+                                (self.board[i][j+1], self.board[i-1][j+1]),
+                                (self.board[i-1][j+1], self.board[i][j+1]),
+                            }
+                        else:  # vertical wall at (i,j): cuts left/right edges
+                            wall_edges = {
+                                (self.board[i][j],   self.board[i][j-1]),
+                                (self.board[i][j-1], self.board[i][j]),
+                                (self.board[i+1][j], self.board[i+1][j-1]),
+                                (self.board[i+1][j-1], self.board[i+1][j]),
+                            }
 
-                        if b: #vertical
-                            case2 = self.board[i+1][j]
-                        else:
-                            case2 = self.board[i][j+1]
-
-                        if case in paths or case2 in paths:
-                            if self.is_wall_legal(i, j, is_vertical=b):
+                        if wall_edges & path_edges:
+                            # wall cuts a path edge — need full legality check
+                            if self.is_wall_legal(i, j, b):
                                 actions.append(Action("WALL", i=i, j=j, is_vertical=b))
-                        
                         else:
-                            if self.can_wall(i,j,b):
-                                actions.append(Action("WALL", i=i, j=j, is_vertical=b))
+                            # wall doesn't touch any path edge — can_wall is enough
+                            actions.append(Action("WALL", i=i, j=j, is_vertical=b))
                                 
 
                         
@@ -445,15 +487,21 @@ class Plateau :
     def get_less_legal_actions(self,joueur):
         actions = []
         other_player = self.get_other_player(joueur)
+
+
         for dest_case in self.get_accessible_cases(joueur):
             actions.append(Action("MOVE", dest_case))
 
         if joueur.barrieres > 0:
 
-            player_path = set(joueur.a_star_shortest_physical_path())
-            other_path = set(self.get_other_player(joueur).a_star_shortest_physical_path())
+            player_path = joueur.a_star_shortest_physical_path()
+            other_path = self.get_other_player(joueur).a_star_shortest_physical_path()
 
-            paths = player_path | other_path
+            player_edges = path_to_edges(player_path)
+            other_edges = path_to_edges(other_path)
+            path_edges = player_edges | other_edges
+
+            
 
             for i in range(self.dim):
                 for j in range(min(joueur.case.col -1,other_player.case.col -1), max(joueur.case.col +1,other_player.case.col +1)):
@@ -465,20 +513,29 @@ class Plateau :
                         if not self.can_wall(i, j, b):
                             continue
 
-                        case2 = None
+                        # get the 2 edges this wall would cut
+                        if not b:  # horizontal wall at (i,j): cuts up/down edges
+                            wall_edges = {
+                                (self.board[i][j],   self.board[i-1][j]),
+                                (self.board[i-1][j], self.board[i][j]),
+                                (self.board[i][j+1], self.board[i-1][j+1]),
+                                (self.board[i-1][j+1], self.board[i][j+1]),
+                            }
+                        else:  # vertical wall at (i,j): cuts left/right edges
+                            wall_edges = {
+                                (self.board[i][j],   self.board[i][j-1]),
+                                (self.board[i][j-1], self.board[i][j]),
+                                (self.board[i+1][j], self.board[i+1][j-1]),
+                                (self.board[i+1][j-1], self.board[i+1][j]),
+                            }
 
-                        if b: #vertical
-                            case2 = self.board[i+1][j]
-                        else:
-                            case2 = self.board[i][j+1]
-
-                        if case in paths or case2 in paths:
-                            if self.is_wall_legal(i, j, is_vertical=b):
+                        if wall_edges & path_edges:
+                            # wall cuts a path edge — need full legality check
+                            if self.is_wall_legal(i, j, b):
                                 actions.append(Action("WALL", i=i, j=j, is_vertical=b))
-                        
                         else:
-                            if self.can_wall(i,j,b):
-                                actions.append(Action("WALL", i=i, j=j, is_vertical=b))
+                            # wall doesn't touch any path edge — can_wall is enough
+                            actions.append(Action("WALL", i=i, j=j, is_vertical=b))
                                 
 
 
@@ -508,7 +565,13 @@ class Plateau :
                 setattr(case, attr, val)
 
 
-
+def path_to_edges(path):
+        edges = set()
+        for k in range(len(path) - 1):
+            a, b = path[k], path[k+1]
+            edges.add((a, b))
+            edges.add((b, a))  
+        return edges
 
 
 def manhattan_distance_to_goal(case, player):
