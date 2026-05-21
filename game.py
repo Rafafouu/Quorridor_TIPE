@@ -131,7 +131,7 @@ class Joueur:
     def play(self):
         print("OVERWRITE THIS PLZ")
 
-class Action:
+class Action: #les actions a jouer genre se deplacer / poser une barrière
     def __init__(self, action_type, destination=None, i=None, j=None, is_vertical=None):
         self.type = action_type 
         
@@ -171,15 +171,6 @@ class Plateau :
     #peut placer un mur PHYSIQUEMENT
     def can_wall(self, i, j, is_vertical):
         
-
-        # -------------------------
-        # HORIZONTAL
-        # blocks:
-        #
-        # (i-1,j)   <-> (i,j)
-        # (i-1,j+1) <-> (i,j+1)
-        # -------------------------
-
         if not is_vertical:
 
             if i <= 0 or i >= self.dim:
@@ -205,14 +196,6 @@ class Plateau :
 
             return True
 
-        # -------------------------
-        # VERTICAL
-        # blocks:
-        #
-        # (i,j-1) <-> (i,j)
-        # (i+1,j-1) <-> (i+1,j)
-        # -------------------------
-
         else:
 
             if j <= 0 or j >= self.dim:
@@ -237,7 +220,7 @@ class Plateau :
 
             return True
     
-    def can_finish_BFS(self,joueur):
+    def can_finish_BFS(self,joueur):  #dépassé 
         vu = set()
         case = joueur.case
         file = deque()
@@ -500,19 +483,11 @@ class Plateau :
 
         other_player = self.get_other_player(joueur)
 
-        # -----------------
-        # MOVES
-        # -----------------
-
         for dest_case in self.get_accessible_cases(joueur):
             actions.append(Action("MOVE", dest_case))
 
         if joueur.barrieres <= 0:
             return actions
-
-        # -----------------
-        # WALL SEARCH ZONE
-        # -----------------
 
         min_col = max(0, min(joueur.case.col, other_player.case.col) - 1)
         max_col = min(self.dim - 1,
