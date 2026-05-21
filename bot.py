@@ -101,3 +101,11 @@ class AlphaStarLessStallBot(AlphaBotSkeleton):
         self.plateau.apply_action(self,act)
         return True
     
+class AlphaStarLessAggressiveBot(AlphaBotSkeleton):
+    
+    def play(self):
+        eval, act = alpha_beta_less_move(eval_aggresive,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True,True)
+        print(act)
+        self.plateau.apply_action(self,act)
+        return True
+    
