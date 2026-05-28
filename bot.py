@@ -108,6 +108,14 @@ class AlphaStarLessStallBot(AlphaBotSkeleton):
         self.plateau.apply_action(self,act)
         return True
     
+class AlphaStarStallBot(AlphaBotSkeleton):
+    
+    def play(self):
+        eval, act = alpha_beta(eval_stall,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True,True)
+        print(act)
+        self.plateau.apply_action(self,act)
+        return True
+    
 class AlphaStarLessAggressiveBot(AlphaBotSkeleton):
     
     def play(self):
@@ -115,4 +123,13 @@ class AlphaStarLessAggressiveBot(AlphaBotSkeleton):
         print(act)
         self.plateau.apply_action(self,act)
         return True
+
+class AlphaStarAggressiveBot(AlphaBotSkeleton):
     
+    def play(self):
+        eval, act = alpha_beta(eval_aggresive,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True,True)
+        print(act)
+        self.plateau.apply_action(self,act)
+        return True
+    
+
