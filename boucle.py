@@ -5,13 +5,14 @@ from render_pygame import QuoridorRenderer
 dim = 9
 
 plateau = Plateau(dim)
-j1 = AlphaStarLessAggressiveBot(plateau.board[dim-1][dim // 2], [case for case in plateau.board[0]], plateau, 3) #ROUGE
-j2 = AlphaStarLessStallBot(plateau.board[0][dim // 2], [case for case in plateau.board[dim-1]], plateau, 3) #BLEU
+j1 = AlphaStarLessStallBot(plateau.board[dim-1][dim // 2], [case for case in plateau.board[0]], plateau, 3) #ROUGE
+j2 = AStarBot(plateau.board[0][dim // 2], [case for case in plateau.board[dim-1]], plateau) #BLEU
 plateau.add_players(j1, j2)
 
 
 renderer = QuoridorRenderer(dim=dim)
 renderer.run(plateau, j1, j2, plateau.game_ended)
+
 
 """current_player = j1
 
