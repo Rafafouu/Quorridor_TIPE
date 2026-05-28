@@ -136,6 +136,101 @@ def eval_center(joueur: Joueur):
     return score
 
 
+
+
+
+
 def eval_manhattan(joueur: Joueur):
     other = joueur.plateau.get_other_player(joueur)
     return -manhattan_distance_to_goal(joueur.case,joueur) + manhattan_distance_to_goal(other.case,other)
+
+
+
+
+
+
+
+def eval_giga_smart(joueur: Joueur):
+
+    other = joueur.plateau.get_other_player(joueur)
+
+    if joueur.case in joueur.goal:
+        return 1000000
+
+    if other.case in other.goal:
+        return -1000000
+
+
+    my_path = a_star_shortest_path(joueur)
+    opp_path = a_star_shortest_path(other)
+
+    if my_path is None:
+        return -10000
+
+    if opp_path is None:
+        return 10000
+
+    my_dist = len(my_path)
+    opp_dist = len(opp_path)
+
+    score = 0
+
+
+    # 1. le chemin adverse et le notre valent autant (très importants)
+    score += 20 * (opp_dist - my_dist)
+
+
+
+
+
+
+    # 2. TEMPO
+    # à distance égale, celui qui joue est avantagé
+    if my_dist == opp_dist:
+        score += 3
+
+
+
+
+
+    #3. Valeur des murs
+    phase = my_dist + opp_dist
+
+    # plus la fin approche, moins les murs valent
+    wall_weight = max(0.3, phase / 20)
+
+    score += wall_weight * 2 * (joueur.barrieres - other.barrieres)
+
+
+
+
+    #4. tactique positionnelle
+    # éviter les mouvements sur le coté inutiles
+    center = joueur.plateau.dim // 2
+
+    score -= 0.3 * abs(joueur.case.col - center)
+
+
+
+
+
+    # 5. Encourager a gagner si on peut
+
+    # encourage les positions quasi gagnantes
+    score -= 3 * my_dist
+
+
+
+    # 6. mode défensif
+
+    # si l'adversaire est proche de gagner on l'empeche
+    if opp_dist <= 3:
+        score -= 15
+
+    # 7. anti retour en arrière
+
+    if joueur.previous_case is not None:
+        if len(my_path) > 0 and my_path[0] == joueur.previous_case:
+            score -= 40 
+
+    return score

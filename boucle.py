@@ -6,7 +6,7 @@ dim = 9
 
 plateau = Plateau(dim)
 j1 = AlphaStarLessMoveBot(plateau.board[dim-1][dim // 2], [case for case in plateau.board[0]], plateau, 3) #ROUGE
-j2 = AlphaStarLessLessMoveBot(plateau.board[0][dim // 2], [case for case in plateau.board[dim-1]], plateau, 6) #BLEU
+j2 = ASLGigaSmartBot(plateau.board[0][dim // 2], [case for case in plateau.board[dim-1]], plateau, 3) #BLEU
 plateau.add_players(j1, j2)
 
 
