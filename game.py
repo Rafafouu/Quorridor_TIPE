@@ -2,7 +2,7 @@ from collections import deque
 import heapq
 from importlib.resources import path
 
-BARRIERE_START = 10
+BARRIERE_START = 5
 
 class Case : 
 
@@ -73,6 +73,8 @@ class Joueur:
         self.goal = goal
         self.plateau = plateau
         self.barrieres = BARRIERE_START
+    
+        self.previous_case = None
     
     def try_move(self, destination : Case):
         if destination in self.plateau.get_accessible_cases(self):
@@ -546,9 +548,14 @@ class Plateau :
 
     def apply_action(self, joueur, action):
         if action.type == "MOVE":
+
             old_case = joueur.case
+            old_previous = joueur.previous_case
+
+            joueur.previous_case = joueur.case
             joueur.case = action.destination
-            return ("MOVE",old_case)   #pour backup
+
+            return ("MOVE", old_case, old_previous)   #pour backup
             
         elif action.type == "WALL":
             joueur.barrieres -= 1
@@ -559,7 +566,8 @@ class Plateau :
         back_action = backup[1]
 
         if back_type == "MOVE":
-            joueur.case = back_action #old_case
+            joueur.case = backup[1]
+            joueur.previous_case = backup[2]
 
         elif back_type == "WALL":
             joueur.barrieres += 1
@@ -579,3 +587,39 @@ def path_to_edges(path):
 
 def manhattan_distance_to_goal(case, player):
     return abs(case.row - player.goal[0].row)
+
+
+#TODO verifier les g=0 c'est probablement des 1 surement
+def a_star_shortest_path(joueur):
+        start = joueur.case
+
+        # chaque element = (f, g, current, path_taken)
+        # g = distance entre départ et current
+        # f = g + h (Manhattan distance)
+        
+        priority_queue = [(0 + manhattan_distance_to_goal(start, joueur), 0, start, [start])]
+        visited = {
+            start: 0
+        }
+
+        while len(priority_queue) > 0:
+            f, g, current, path = heapq.heappop(priority_queue)
+
+            if current in joueur.goal:
+                return path[1::] #on retourne le chemin sans la position de départ
+
+            neighbors = []
+
+
+            if g == 0: #si c'est le premier tour faut prendre en compte la position de l'adversaire
+                neighbors = joueur.plateau.get_accessible_cases(joueur)
+            else: #on s'occupe pas du joueur adverse psk tfacon il va bouger
+                neighbors = current.get_accessible_neighbors()
+
+            for neighbor in neighbors:
+                if neighbor not in visited or g + 1 < visited[neighbor]: #on update le voisin si on trouve un chemin plus court vers lui
+                    visited[neighbor] = g + 1
+                    h = manhattan_distance_to_goal(neighbor, joueur)
+                    heapq.heappush(priority_queue, (g + 1 + h, g + 1, neighbor, path + [neighbor]))
+        
+        return None #aucun chemin

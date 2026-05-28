@@ -2,7 +2,7 @@ from game import *
 from bot import *
 from render_pygame import QuoridorRenderer
 
-dim = 9
+dim = 5
 
 plateau = Plateau(dim)
 j1 = AlphaStarLessAggressiveBot(plateau.board[dim-1][dim // 2], [case for case in plateau.board[0]], plateau, 4) #ROUGE

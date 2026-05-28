@@ -1,4 +1,5 @@
 from game import *
+from eval import *
 
 def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int, joueur : Joueur, maxi : bool):
     """
@@ -84,6 +85,7 @@ def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int,
         return value,best
 
 
+<<<<<<< HEAD
 #TODO verifier les g=0 c'est probablement des 1 surement
 def a_star_shortest_path(joueur):
         start = joueur.case
@@ -178,6 +180,8 @@ def eval_manhattan(joueur: Joueur):
     other = joueur.plateau.get_other_player(joueur)
     return -manhattan_distance_to_goal(joueur.case,joueur) + manhattan_distance_to_goal(other.case,other)
 
+=======
+>>>>>>> refs/remotes/origin/main
 def alpha_beta_less_less_move(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int, joueur : Joueur, maxi : bool,debug = False):
     
     if plateau.game_ended():
@@ -307,3 +311,4 @@ def alpha_beta_less_move(eval ,plateau : Plateau ,profondeur : int,alpha : int,b
                 break
 
         return value,best
+    
