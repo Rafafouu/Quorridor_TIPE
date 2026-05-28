@@ -133,3 +133,38 @@ class AlphaStarAggressiveBot(AlphaBotSkeleton):
         return True
     
 
+class AlphaStarCenterBot(AlphaBotSkeleton):
+    
+    def play(self):
+        eval, act = alpha_beta(eval_center,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True,True)
+        print(act)
+        self.plateau.apply_action(self,act)
+        return True
+    
+class AlphaStarLessCenterBot(AlphaBotSkeleton):
+    
+    def play(self):
+        eval, act = alpha_beta_less_move(eval_center,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True,True)
+        print(act)
+        self.plateau.apply_action(self,act)
+        return True
+    
+class AlphaStarOpenSpacesBot(AlphaBotSkeleton):
+    
+    def play(self):
+        eval, act = alpha_beta(eval_accessible_cases,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True,True)
+        print(act)
+        self.plateau.apply_action(self,act)
+        return True
+
+class AlphaStarLessOpenSpacesBot(AlphaBotSkeleton):
+    
+    def play(self):
+        eval, act = alpha_beta_less_move(eval_accessible_cases,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True,True)
+        print(act)
+        self.plateau.apply_action(self,act)
+        return True
+    
+
+
+    
