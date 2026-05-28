@@ -27,7 +27,7 @@ def eval_a_star(joueur : Joueur):
 
         if joueur.previous_case is not None:
             if len(j_path) > 0 and j_path[0] == joueur.previous_case:
-                score -= 40  # pénalise le fait de revenir en arrière
+                score -= 100  # pénalise le fait de revenir en arrière
         return score 
 
 
@@ -48,7 +48,7 @@ def eval_stall(joueur: Joueur):
     score += 0.1 * (joueur.barrieres - other.barrieres)
     if joueur.previous_case is not None:
         if len(j_path) > 0 and j_path[0] == joueur.previous_case:
-            score -= 40  # pénalise le fait de revenir en arrière
+            score -= 100  # pénalise le fait de revenir en arrière
     return score
 
 
@@ -67,7 +67,7 @@ def eval_aggresive(joueur: Joueur):
     score = -3*len(j_path) + len(other_path) + 2 * (joueur.barrieres - other.barrieres)
     if joueur.previous_case is not None:
         if len(j_path) > 0 and j_path[0] == joueur.previous_case:
-            score -= 40  # pénalise le fait de revenir en arrière
+            score -= 100  # pénalise le fait de revenir en arrière
     return score
 
 
@@ -97,7 +97,7 @@ def eval_accessible_cases(joueur: Joueur):
 
     if joueur.previous_case is not None:
         if len(j_path) > 0 and j_path[0] == joueur.previous_case:
-            score -= 40  # pénalise le fait de revenir en arrière
+            score -= 100  # pénalise le fait de revenir en arrière
 
 
     return  score 
@@ -132,7 +132,7 @@ def eval_center(joueur: Joueur):
     score += 0.4 * (joueur.barrieres - other.barrieres)
     if joueur.previous_case is not None:
         if len(j_path) > 0 and j_path[0] == joueur.previous_case:
-            score -= 40  # pénalise le fait de revenir en arrière
+            score -= 100  # pénalise le fait de revenir en arrière
     return score
 
 
@@ -231,6 +231,6 @@ def eval_giga_smart(joueur: Joueur):
 
     if joueur.previous_case is not None:
         if len(my_path) > 0 and my_path[0] == joueur.previous_case:
-            score -= 40 
+            score -= 100 
 
     return score

@@ -166,5 +166,20 @@ class ASLOpenSpacesBot(AlphaBotSkeleton):
         return True
     
 
-
+class ASGigaSmartBot(AlphaBotSkeleton):
     
+    def play(self):
+        eval, act = alpha_beta(eval_giga_smart,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True,True)
+        print(act)
+        self.plateau.apply_action(self,act)
+        return True
+
+class ASLGigaSmartBot(AlphaBotSkeleton):
+    
+    def play(self):
+        eval, act = alpha_beta_less_move(eval_giga_smart,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True,True)
+        print(act)
+        self.plateau.apply_action(self,act)
+        return True
+    
+
