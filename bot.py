@@ -92,6 +92,13 @@ class AlphaStarLessMoveBot(AlphaBotSkeleton):
         self.plateau.apply_action(self,act)
         return True
     
+class AlphaStarLessLessMoveBot(AlphaBotSkeleton):
+    
+    def play(self):
+        eval, act = alpha_beta_less_less_move(eval_a_star,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True,True)
+        print(act)
+        self.plateau.apply_action(self,act)
+        return True
 
 class AlphaStarLessStallBot(AlphaBotSkeleton):
     
