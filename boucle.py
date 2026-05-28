@@ -5,7 +5,7 @@ from render_pygame import QuoridorRenderer
 dim = 9
 
 plateau = Plateau(dim)
-j1 = ASLCenterBot(plateau.board[dim-1][dim // 2], [case for case in plateau.board[0]], plateau, 3) #ROUGE
+j1 = ASLGigaSmartBot(plateau.board[dim-1][dim // 2], [case for case in plateau.board[0]], plateau, 3) #ROUGE
 j2 = ASLOpenSpacesBot(plateau.board[0][dim // 2], [case for case in plateau.board[dim-1]], plateau, 3) #BLEU
 plateau.add_players(j1, j2)
 
