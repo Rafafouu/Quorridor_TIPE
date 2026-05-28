@@ -7,7 +7,7 @@ BARRIERE_START = 10
 class Case : 
 
     def __lt__(self, other): #pour la heapq apparemment jsp
-        return False
+        return (self.row, self.col) < (other.row, other.col)
 
     def __init__(self,row,col,left= None,right = None,up= None,down = None):
         self.row = row
@@ -98,7 +98,7 @@ class Joueur:
             f, g, current, path = heapq.heappop(priority_queue)
 
             if current in self.goal:
-                return path
+                return path[1::]
 
             neighbors = current.get_accessible_neighbors()
 

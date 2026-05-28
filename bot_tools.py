@@ -132,10 +132,10 @@ def eval_a_star(joueur : Joueur):
         j_path = joueur.a_star_shortest_physical_path()
         other_path = other.a_star_shortest_physical_path()
 
-        """if j_path is None:
+        if j_path is None:
             return -100000
         if other_path is None:
-            return +100000"""
+            return +100000
 
         #on veut le plus haut score :
         #on veut que NOTRE chemin soit petit, donc négatif pour que l'éval diminue s'il s'allonge
