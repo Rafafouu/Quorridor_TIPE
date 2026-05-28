@@ -2,7 +2,7 @@ from collections import deque
 import heapq
 from importlib.resources import path
 
-BARRIERE_START = 5
+BARRIERE_START = 10
 
 class Case : 
 
@@ -494,6 +494,39 @@ class Plateau :
                     max(joueur.case.col, other_player.case.col) + 1)
 
         for i in range(self.dim):
+
+            for j in range(min_col, max_col + 1):
+
+                for b in [True, False]:
+
+                    if self.is_wall_legal(i, j, b):
+                        actions.append(
+                            Action(
+                                "WALL",
+                                i=i,
+                                j=j,
+                                is_vertical=b
+                            )
+                        )
+
+        return actions
+    
+    def get_less_less_legal_actions(self, joueur):
+        actions = []
+
+        other_player = self.get_other_player(joueur)
+
+        for dest_case in self.get_accessible_cases(joueur):
+            actions.append(Action("MOVE", dest_case))
+
+        if joueur.barrieres <= 0:
+            return actions
+
+        min_col = max(0, min(joueur.case.col, other_player.case.col) - 1)
+        max_col = min(self.dim - 1,
+                    max(joueur.case.col, other_player.case.col) + 1)
+
+        for i in range(min(other_player.case.row, other_player.goal[0].row), max(other_player.case.row , other_player.goal[0].row )):
 
             for j in range(min_col, max_col + 1):
 
