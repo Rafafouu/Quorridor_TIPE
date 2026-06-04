@@ -2,11 +2,11 @@ from game import *
 from bot import *
 from render_pygame import QuoridorRenderer
 
-dim = 5
+dim = 3
 
 plateau = Plateau(dim)
-j1 = ASLGigaSmartBot(plateau.board[dim-1][dim // 2], [case for case in plateau.board[0]], plateau, 5) #ROUGE
-j2 = ASLMoveBot(plateau.board[0][dim // 2], [case for case in plateau.board[dim-1]], plateau, 5) #BLEU
+j1 = AStarBot(plateau.board[dim-1][dim // 2], [case for case in plateau.board[0]], plateau) #ROUGE
+j2 = AStarBot(plateau.board[0][dim // 2], [case for case in plateau.board[dim-1]], plateau) #BLEU
 plateau.add_players(j1, j2)
 
 

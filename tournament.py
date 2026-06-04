@@ -12,12 +12,13 @@ classes = [
 
 
 
-dim = 3
+dim = 5
 profondeur = 3
 
 nb_games = 1
 for bot1 in classes:
     for bot2 in classes:
+        print("-------------------")
         print("game " + str(nb_games))
         print(bot1.__name__ + " vs " + bot2.__name__)
 
@@ -41,22 +42,15 @@ for bot1 in classes:
 
 
         current_player = j1
-
+        
         while not plateau.game_ended():
-            print("-------------------")
-            print("c'est au tour de ", "🔴" if current_player == j1 else "🔵")
-            print(plateau)
-
-            t = time.time()
-
-            print(current_player.play())
-
-            print("temps de réflexion : ", time.time() - t, " secondes")
-
+            
+            current_player.play()
             current_player = plateau.get_other_player(current_player)
         
         winner = plateau.get_other_player(current_player)
-        print("Winner : " + (bot1.__name__ if winner == j1 else bot2.__name__))
+        print("Winner : " + (bot1.__name__ +" (j1)" if winner == j1 else bot2.__name__ + "(j2)"))
 
-        print(plateau)
+        nb_games = nb_games + 1
+
         
