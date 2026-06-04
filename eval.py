@@ -12,10 +12,10 @@ def eval_a_star(joueur : Joueur):
         j_path = joueur.a_star_shortest_physical_path()
         other_path = other.a_star_shortest_physical_path()
 
-        """if j_path is None:
+        if j_path is None:
             return -100000
         if other_path is None:
-            return +100000"""
+            return +100000
         score = 0 
         score +=  -1.5*len(j_path)
         score += len(other_path)
@@ -60,8 +60,8 @@ def eval_aggresive(joueur: Joueur):
     if other.case in other.goal:
         return -1000000000
 
-    j_path = a_star_shortest_path(joueur)
-    other_path = a_star_shortest_path(other)
+    j_path = joueur.a_star_shortest_physical_path()
+    other_path = other.a_star_shortest_physical_path()
 
     score = 0
     score = -3*len(j_path) + len(other_path) + 2 * (joueur.barrieres - other.barrieres)
@@ -82,8 +82,8 @@ def eval_accessible_cases(joueur: Joueur):
     if other.case in other.goal:
         return -1000000000
     
-    j_path = a_star_shortest_path(joueur)
-    o_path = a_star_shortest_path(other)
+    j_path = joueur.a_star_shortest_physical_path()
+    o_path = other.a_star_shortest_physical_path()
 
     j_len = len(j_path)
     o_len = len(o_path)
@@ -113,8 +113,8 @@ def eval_center(joueur: Joueur):
     if other.case in other.goal:
         return -1000000000
 
-    j_path = a_star_shortest_path(joueur)
-    o_path = a_star_shortest_path(other)
+    j_path = joueur.a_star_shortest_physical_path()
+    o_path = other.a_star_shortest_physical_path()
 
     j_len = len(j_path)
     o_len = len(o_path)
@@ -137,16 +137,9 @@ def eval_center(joueur: Joueur):
 
 
 
-
-
-
 def eval_manhattan(joueur: Joueur):
     other = joueur.plateau.get_other_player(joueur)
     return -manhattan_distance_to_goal(joueur.case,joueur) + manhattan_distance_to_goal(other.case,other)
-
-
-
-
 
 
 
@@ -160,9 +153,8 @@ def eval_giga_smart(joueur: Joueur):
     if other.case in other.goal:
         return -1000000
 
-
-    my_path = a_star_shortest_path(joueur)
-    opp_path = a_star_shortest_path(other)
+    my_path = joueur.a_star_shortest_physical_path()
+    opp_path = other.a_star_shortest_physical_path()
 
     if my_path is None:
         return -10000
@@ -175,51 +167,26 @@ def eval_giga_smart(joueur: Joueur):
 
     score = 0
 
-
     # 1. le chemin adverse et le notre valent autant (très importants)
     score += 20 * (opp_dist - my_dist)
-
-
-
-
-
 
     # 2. TEMPO
     # à distance égale, celui qui joue est avantagé
     if my_dist == opp_dist:
         score += 3
 
-
-
-
-
-    #3. Valeur des murs
-    phase = my_dist + opp_dist
-
-    # plus la fin approche, moins les murs valent
-    wall_weight = max(0.3, phase / 20)
-
-    score += wall_weight * 2 * (joueur.barrieres - other.barrieres)
-
-
-
+    score += 2 * (joueur.barrieres - other.barrieres)
 
     #4. tactique positionnelle
     # éviter les mouvements sur le coté inutiles
     center = joueur.plateau.dim // 2
 
-    score -= 0.3 * abs(joueur.case.col - center)
-
-
-
-
+    score -= 0.15 * abs(joueur.case.col - center)
 
     # 5. Encourager a gagner si on peut
 
     # encourage les positions quasi gagnantes
     score -= 3 * my_dist
-
-
 
     # 6. mode défensif
 
@@ -235,6 +202,7 @@ def eval_giga_smart(joueur: Joueur):
 
     return score
 
+<<<<<<< HEAD
 
 
 def eval_mirror(joueur : Joueur):
@@ -268,3 +236,69 @@ def eval_mirror(joueur : Joueur):
             if len(j_path) > 0 and j_path[0] == joueur.previous_case:
                 score -= 100  # pénalise le fait de revenir en arrière
         return score 
+=======
+def eval_smart(joueur: Joueur):
+
+    if joueur.case in joueur.goal:
+        return 1000000000
+
+    plateau = joueur.plateau
+    other = plateau.get_other_player(joueur)
+
+    if other.case in other.goal:
+        return -1000000000
+
+    j_path = joueur.a_star_shortest_physical_path()
+    o_path = other.a_star_shortest_physical_path()
+
+    j_len = len(j_path)
+    o_len = len(o_path)
+
+
+    # Immediate win next move
+    if j_len == 1:
+        return 10000000
+
+    # Very close to victory
+    if j_len <= 2:
+        return 1000000 + 100 * (o_len - j_len)
+
+    # Opponent very close and ahead
+    if o_len <= 2 and o_len < j_len:
+        return -500000
+
+    center_col = (plateau.dim - 1) / 2
+    center_weight = 0.9 * (j_len / plateau.dim)
+
+    score = 0
+
+    # Race to goal becomes the dominant factor
+    score += -4.0 * j_len
+    score +=  3.0 * o_len
+
+    # Mobility
+    score += 0.12 * len(plateau.get_accessible_cases(joueur))
+    score -= 0.12 * len(plateau.get_accessible_cases(other))
+
+    # Center control (important early game, less later)
+    score += 0.1*center_weight * (
+        plateau.dim - abs(joueur.case.col - center_col)
+    )
+
+    score -= 0.10*center_weight * (
+        plateau.dim - abs(other.case.col - center_col)
+    )
+
+    # Preserve walls slightly
+    score += 0.5 * (joueur.barrieres - other.barrieres)
+
+    # Extra incentive to move forward
+    score -= 2 * j_len
+
+    # Anti-backtracking
+    if joueur.previous_case is not None:
+        if len(j_path) > 0 and j_path[0] == joueur.previous_case:
+            score -= 100
+
+    return score
+>>>>>>> refs/remotes/origin/main

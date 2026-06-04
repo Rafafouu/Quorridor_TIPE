@@ -2,7 +2,7 @@ from collections import deque
 import heapq
 from importlib.resources import path
 
-BARRIERE_START = 10
+BARRIERE_START = 5
 
 class Case : 
 
@@ -100,7 +100,7 @@ class Joueur:
             f, g, current, path = heapq.heappop(priority_queue)
 
             if current in self.goal:
-                return path[1::]
+                return path[0::]
 
             neighbors = current.get_accessible_neighbors()
 
@@ -451,7 +451,7 @@ class Plateau :
                     for b in [True, False]:
                         if not self.can_wall(i, j, b):
                             continue
-
+                        
                         # get the 2 edges this wall would cut
                         if not b:  # horizontal wall at (i,j): cuts up/down edges
                             wall_edges = {
@@ -476,8 +476,6 @@ class Plateau :
                             # wall doesn't touch any path edge — can_wall is enough
                             actions.append(Action("WALL", i=i, j=j, is_vertical=b))
                                 
-
-                        
         return actions
 
     def get_less_legal_actions(self, joueur):
@@ -490,8 +488,15 @@ class Plateau :
 
         if joueur.barrieres <= 0:
             return actions
+        
+        player_path = joueur.a_star_shortest_physical_path()
+        other_path = self.get_other_player(joueur).a_star_shortest_physical_path()
 
-        min_col = max(0, min(joueur.case.col, other_player.case.col) - 1)
+        player_edges = path_to_edges(player_path)
+        other_edges = path_to_edges(other_path)
+        path_edges = player_edges | other_edges
+
+        min_col = max(0, min(joueur.case.col, other_player.case.col) - 2)
         max_col = min(self.dim - 1,
                     max(joueur.case.col, other_player.case.col) + 1)
 
@@ -501,16 +506,33 @@ class Plateau :
 
                 for b in [True, False]:
 
-                    if self.is_wall_legal(i, j, b):
-                        actions.append(
-                            Action(
-                                "WALL",
-                                i=i,
-                                j=j,
-                                is_vertical=b
-                            )
-                        )
+                    if not self.can_wall(i, j, b):
+                            continue
+                        
+                        # get the 2 edges this wall would cut
+                    if not b:  # horizontal wall at (i,j): cuts up/down edges
+                        wall_edges = {
+                            (self.board[i][j],   self.board[i-1][j]),
+                            (self.board[i-1][j], self.board[i][j]),
+                            (self.board[i][j+1], self.board[i-1][j+1]),
+                            (self.board[i-1][j+1], self.board[i][j+1]),
+                        }
+                    else:  # vertical wall at (i,j): cuts left/right edges
+                        wall_edges = {
+                            (self.board[i][j],   self.board[i][j-1]),
+                            (self.board[i][j-1], self.board[i][j]),
+                            (self.board[i+1][j], self.board[i+1][j-1]),
+                            (self.board[i+1][j-1], self.board[i+1][j]),
+                        }
 
+                    if wall_edges & path_edges:
+                        # wall cuts a path edge — need full legality check
+                        if self.is_wall_legal(i, j, b):
+                            actions.append(Action("WALL", i=i, j=j, is_vertical=b))
+                    else:
+                        # wall doesn't touch any path edge — can_wall is enough
+                        actions.append(Action("WALL", i=i, j=j, is_vertical=b))
+                                
         return actions
     
     def get_less_less_legal_actions(self, joueur):
@@ -528,22 +550,46 @@ class Plateau :
         max_col = min(self.dim - 1,
                     max(joueur.case.col, other_player.case.col) + 1)
 
+        player_path = joueur.a_star_shortest_physical_path()
+        other_path = self.get_other_player(joueur).a_star_shortest_physical_path()
+
+        player_edges = path_to_edges(player_path)
+        other_edges = path_to_edges(other_path)
+        path_edges = player_edges | other_edges
+
         for i in range(min(other_player.case.row, other_player.goal[0].row), max(other_player.case.row , other_player.goal[0].row )):
 
             for j in range(min_col, max_col + 1):
 
                 for b in [True, False]:
 
-                    if self.is_wall_legal(i, j, b):
-                        actions.append(
-                            Action(
-                                "WALL",
-                                i=i,
-                                j=j,
-                                is_vertical=b
-                            )
-                        )
+                    if not self.can_wall(i, j, b):
+                            continue
+                        
+                        # get the 2 edges this wall would cut
+                    if not b:  # horizontal wall at (i,j): cuts up/down edges
+                        wall_edges = {
+                            (self.board[i][j],   self.board[i-1][j]),
+                            (self.board[i-1][j], self.board[i][j]),
+                            (self.board[i][j+1], self.board[i-1][j+1]),
+                            (self.board[i-1][j+1], self.board[i][j+1]),
+                            }
+                    else:  # vertical wall at (i,j): cuts left/right edges
+                        wall_edges = {
+                            (self.board[i][j],   self.board[i][j-1]),
+                            (self.board[i][j-1], self.board[i][j]),
+                            (self.board[i+1][j], self.board[i+1][j-1]),
+                            (self.board[i+1][j-1], self.board[i+1][j]),
+                        }
 
+                    if wall_edges & path_edges:
+                        # wall cuts a path edge — need full legality check
+                        if self.is_wall_legal(i, j, b):
+                            actions.append(Action("WALL", i=i, j=j, is_vertical=b))
+                    else:
+                        # wall doesn't touch any path edge — can_wall is enough
+                        actions.append(Action("WALL", i=i, j=j, is_vertical=b))
+                                
         return actions
 
     def apply_action(self, joueur, action):
@@ -606,7 +652,7 @@ def a_star_shortest_path(joueur):
             f, g, current, path = heapq.heappop(priority_queue)
 
             if current in joueur.goal:
-                return path[1::] #on retourne le chemin sans la position de départ
+                return path
 
             neighbors = []
 
