@@ -12,10 +12,10 @@ def eval_a_star(joueur : Joueur):
         j_path = joueur.a_star_shortest_physical_path()
         other_path = other.a_star_shortest_physical_path()
 
-        """if j_path is None:
+        if j_path is None:
             return -100000
         if other_path is None:
-            return +100000"""
+            return +100000
         score = 0 
         score +=  -1.5*len(j_path)
         score += len(other_path)
@@ -60,8 +60,8 @@ def eval_aggresive(joueur: Joueur):
     if other.case in other.goal:
         return -1000000000
 
-    j_path = a_star_shortest_path(joueur)
-    other_path = a_star_shortest_path(other)
+    j_path = joueur.a_star_shortest_physical_path()
+    other_path = other.a_star_shortest_physical_path()
 
     score = 0
     score = -3*len(j_path) + len(other_path) + 2 * (joueur.barrieres - other.barrieres)
@@ -82,8 +82,8 @@ def eval_accessible_cases(joueur: Joueur):
     if other.case in other.goal:
         return -1000000000
     
-    j_path = a_star_shortest_path(joueur)
-    o_path = a_star_shortest_path(other)
+    j_path = joueur.a_star_shortest_physical_path()
+    o_path = other.a_star_shortest_physical_path()
 
     j_len = len(j_path)
     o_len = len(o_path)
@@ -113,8 +113,8 @@ def eval_center(joueur: Joueur):
     if other.case in other.goal:
         return -1000000000
 
-    j_path = a_star_shortest_path(joueur)
-    o_path = a_star_shortest_path(other)
+    j_path = joueur.a_star_shortest_physical_path()
+    o_path = other.a_star_shortest_physical_path()
 
     j_len = len(j_path)
     o_len = len(o_path)
@@ -153,8 +153,8 @@ def eval_giga_smart(joueur: Joueur):
     if other.case in other.goal:
         return -1000000
 
-    my_path = a_star_shortest_path(joueur)
-    opp_path = a_star_shortest_path(other)
+    my_path = joueur.a_star_shortest_physical_path()
+    opp_path = other.a_star_shortest_physical_path()
 
     if my_path is None:
         return -10000
@@ -213,8 +213,8 @@ def eval_smart(joueur: Joueur):
     if other.case in other.goal:
         return -1000000000
 
-    j_path = a_star_shortest_path(joueur)
-    o_path = a_star_shortest_path(other)
+    j_path = joueur.a_star_shortest_physical_path()
+    o_path = other.a_star_shortest_physical_path()
 
     j_len = len(j_path)
     o_len = len(o_path)
