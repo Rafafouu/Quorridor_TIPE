@@ -6,7 +6,7 @@ BARRIERE_START = 5
 
 class Case : 
 
-    def __lt__(self, other): #pour la heapq apparemment jsp
+    def __lt__(self, other): #pour la heapq trust
         return (self.row, self.col) < (other.row, other.col)
 
     def __init__(self,row,col,left= None,right = None,up= None,down = None):
@@ -170,7 +170,7 @@ class Plateau :
         self.j1 = j1
         self.j2 = j2
 
-    #peut placer un mur PHYSIQUEMENT
+    #peut placer un mur PHYSIQUEMENT (version 38 ca marche enfin, bonne chance pour relire les indices)
     def can_wall(self, i, j, is_vertical):
         
         if not is_vertical:
@@ -181,15 +181,15 @@ class Plateau :
             if j < 0 or j >= self.dim - 1:
                 return False
 
-            # overlap
+            # meme endroit
             if self.board[i][j].up is None:
                 return False
 
             if self.board[i][j+1].up is None:
                 return False
 
-            # crossing wall
-            # vertical centered on same intersection
+            
+            # intersection
             if (
                 self.board[i][j+1].left is None
                 and self.board[i-1][j+1].left is None
@@ -206,14 +206,14 @@ class Plateau :
             if i < 0 or i >= self.dim - 1:
                 return False
 
-            # overlap
+            
             if self.board[i][j].left is None:
                 return False
 
             if self.board[i+1][j].left is None:
                 return False
 
-            # crossing wall
+            # intersection
             if (
                 self.board[i+1][j].up is None
                 and self.board[i+1][j-1].up is None
@@ -452,15 +452,15 @@ class Plateau :
                         if not self.can_wall(i, j, b):
                             continue
                         
-                        # get the 2 edges this wall would cut
-                        if not b:  # horizontal wall at (i,j): cuts up/down edges
+                        # edges importants 
+                        if not b:  # horizontal up/down 
                             wall_edges = {
                                 (self.board[i][j],   self.board[i-1][j]),
                                 (self.board[i-1][j], self.board[i][j]),
                                 (self.board[i][j+1], self.board[i-1][j+1]),
                                 (self.board[i-1][j+1], self.board[i][j+1]),
                             }
-                        else:  # vertical wall at (i,j): cuts left/right edges
+                        else:  # vertical left/right 
                             wall_edges = {
                                 (self.board[i][j],   self.board[i][j-1]),
                                 (self.board[i][j-1], self.board[i][j]),
@@ -469,11 +469,11 @@ class Plateau :
                             }
 
                         if wall_edges & path_edges:
-                            # wall cuts a path edge — need full legality check
+                            #obligé de payer le cher prix de verifier avec un bfs/dfs
                             if self.is_wall_legal(i, j, b):
                                 actions.append(Action("WALL", i=i, j=j, is_vertical=b))
                         else:
-                            # wall doesn't touch any path edge — can_wall is enough
+                            #sinon c est ok 
                             actions.append(Action("WALL", i=i, j=j, is_vertical=b))
                                 
         return actions
@@ -509,15 +509,15 @@ class Plateau :
                     if not self.can_wall(i, j, b):
                             continue
                         
-                        # get the 2 edges this wall would cut
-                    if not b:  # horizontal wall at (i,j): cuts up/down edges
+                    #cf fct° au dessus pour coms
+                    if not b: 
                         wall_edges = {
                             (self.board[i][j],   self.board[i-1][j]),
                             (self.board[i-1][j], self.board[i][j]),
                             (self.board[i][j+1], self.board[i-1][j+1]),
                             (self.board[i-1][j+1], self.board[i][j+1]),
                         }
-                    else:  # vertical wall at (i,j): cuts left/right edges
+                    else:  
                         wall_edges = {
                             (self.board[i][j],   self.board[i][j-1]),
                             (self.board[i][j-1], self.board[i][j]),
@@ -526,11 +526,10 @@ class Plateau :
                         }
 
                     if wall_edges & path_edges:
-                        # wall cuts a path edge — need full legality check
+                        
                         if self.is_wall_legal(i, j, b):
                             actions.append(Action("WALL", i=i, j=j, is_vertical=b))
                     else:
-                        # wall doesn't touch any path edge — can_wall is enough
                         actions.append(Action("WALL", i=i, j=j, is_vertical=b))
                                 
         return actions
@@ -566,15 +565,15 @@ class Plateau :
                     if not self.can_wall(i, j, b):
                             continue
                         
-                        # get the 2 edges this wall would cut
-                    if not b:  # horizontal wall at (i,j): cuts up/down edges
+                        
+                    if not b:  
                         wall_edges = {
                             (self.board[i][j],   self.board[i-1][j]),
                             (self.board[i-1][j], self.board[i][j]),
                             (self.board[i][j+1], self.board[i-1][j+1]),
                             (self.board[i-1][j+1], self.board[i][j+1]),
                             }
-                    else:  # vertical wall at (i,j): cuts left/right edges
+                    else:  
                         wall_edges = {
                             (self.board[i][j],   self.board[i][j-1]),
                             (self.board[i][j-1], self.board[i][j]),
@@ -583,11 +582,9 @@ class Plateau :
                         }
 
                     if wall_edges & path_edges:
-                        # wall cuts a path edge — need full legality check
                         if self.is_wall_legal(i, j, b):
                             actions.append(Action("WALL", i=i, j=j, is_vertical=b))
                     else:
-                        # wall doesn't touch any path edge — can_wall is enough
                         actions.append(Action("WALL", i=i, j=j, is_vertical=b))
                                 
         return actions

@@ -143,7 +143,7 @@ def eval_manhattan(joueur: Joueur):
 
 
 
-def eval_giga_smart(joueur: Joueur):
+def eval_giga_smart(joueur: Joueur): #plein de trucs qui le rendent nuls
 
     other = joueur.plateau.get_other_player(joueur)
 
@@ -166,43 +166,25 @@ def eval_giga_smart(joueur: Joueur):
     opp_dist = len(opp_path)
 
     score = 0
-
-    # 1. le chemin adverse et le notre valent autant (très importants)
     score += 20 * (opp_dist - my_dist)
-
-    # 2. TEMPO
-    # à distance égale, celui qui joue est avantagé
     if my_dist == opp_dist:
         score += 3
 
     score += 2 * (joueur.barrieres - other.barrieres)
-
-    #4. tactique positionnelle
-    # éviter les mouvements sur le coté inutiles
     center = joueur.plateau.dim // 2
 
     score -= 0.15 * abs(joueur.case.col - center)
 
-    # 5. Encourager a gagner si on peut
-
-    # encourage les positions quasi gagnantes
     score -= 3 * my_dist
-
-    # 6. mode défensif
-
-    # si l'adversaire est proche de gagner on l'empeche
     if opp_dist <= 3:
         score -= 15
-
-    # 7. anti retour en arrière
-
     if joueur.previous_case is not None:
         if len(my_path) > 0 and my_path[0] == joueur.previous_case:
             score -= 100 
 
     return score
 
-def eval_smart(joueur: Joueur):
+def eval_smart(joueur: Joueur): #pareil
 
     if joueur.case in joueur.goal:
         return 1000000000
@@ -219,16 +201,12 @@ def eval_smart(joueur: Joueur):
     j_len = len(j_path)
     o_len = len(o_path)
 
-
-    # Immediate win next move
     if j_len == 1:
         return 10000000
 
-    # Very close to victory
     if j_len <= 2:
         return 1000000 + 100 * (o_len - j_len)
 
-    # Opponent very close and ahead
     if o_len <= 2 and o_len < j_len:
         return -500000
 
@@ -237,15 +215,12 @@ def eval_smart(joueur: Joueur):
 
     score = 0
 
-    # Race to goal becomes the dominant factor
     score += -4.0 * j_len
     score +=  3.0 * o_len
 
-    # Mobility
     score += 0.12 * len(plateau.get_accessible_cases(joueur))
     score -= 0.12 * len(plateau.get_accessible_cases(other))
 
-    # Center control (important early game, less later)
     score += 0.1*center_weight * (
         plateau.dim - abs(joueur.case.col - center_col)
     )
@@ -254,15 +229,13 @@ def eval_smart(joueur: Joueur):
         plateau.dim - abs(other.case.col - center_col)
     )
 
-    # Preserve walls slightly
     score += 0.5 * (joueur.barrieres - other.barrieres)
 
-    # Extra incentive to move forward
     score -= 2 * j_len
 
-    # Anti-backtracking
+
     if joueur.previous_case is not None:
         if len(j_path) > 0 and j_path[0] == joueur.previous_case:
-            score -= 100
+            score -= 100 #penalise arriere 
 
     return score
