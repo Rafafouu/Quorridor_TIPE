@@ -92,13 +92,6 @@ class ASLMoveBot(AlphaBotSkeleton):
         self.plateau.apply_action(self,act)
         return True
     
-class ASLMirrorBot(AlphaBotSkeleton):
-    
-    def play(self):
-        eval, act = alpha_beta_less_move(eval_mirror,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True,True)
-        print(act)
-        self.plateau.apply_action(self,act)
-        return True
     
 class AS2LMoveBot(AlphaBotSkeleton):
     
@@ -119,7 +112,7 @@ class ASLStallBot(AlphaBotSkeleton):
 class ASStallBot(AlphaBotSkeleton):
     
     def play(self):
-        eval, act = alpha_beta(eval_stall,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True,True)
+        eval, act = alpha_beta(eval_stall,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True)
         print(act)
         self.plateau.apply_action(self,act)
         return True
