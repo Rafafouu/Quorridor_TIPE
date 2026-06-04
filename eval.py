@@ -202,41 +202,6 @@ def eval_giga_smart(joueur: Joueur):
 
     return score
 
-<<<<<<< HEAD
-
-
-def eval_mirror(joueur : Joueur):
-        
-        if joueur.case in joueur.goal:
-            return +1000000000
-        
-        other = joueur.plateau.get_other_player(joueur)
-        if other.case in other.goal:
-            return -1000000000
-
-        j_path = joueur.a_star_shortest_physical_path()
-        other_path = other.a_star_shortest_physical_path()
-
-        """if j_path is None:
-            return -100000
-        if other_path is None:
-            return +100000"""
-        score = 0 
-        score +=  -1.5*len(j_path)
-        score += len(other_path)
-        score += 0.25 * (joueur.barrieres - other.barrieres)
-        score -= 1.75 * abs(joueur.case.col - other.case.col)
-
-        #on veut le plus haut score :
-        #on veut que NOTRE chemin soit petit, donc négatif pour que l'éval diminue s'il s'allonge
-        #on veut que le chemin de l'adversaire soit grand, donc positif pour que l'éval augmente s'il s'allonge
-        #pondéré comme ça c'est plus important d'avoir son propre chemin court (strat offensive)
-
-        if joueur.previous_case is not None:
-            if len(j_path) > 0 and j_path[0] == joueur.previous_case:
-                score -= 100  # pénalise le fait de revenir en arrière
-        return score 
-=======
 def eval_smart(joueur: Joueur):
 
     if joueur.case in joueur.goal:
@@ -301,4 +266,3 @@ def eval_smart(joueur: Joueur):
             score -= 100
 
     return score
->>>>>>> refs/remotes/origin/main
