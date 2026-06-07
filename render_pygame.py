@@ -112,7 +112,7 @@ class QuoridorRenderer:
                 current.play()
                 print(f"{type(current).__name__} a joué en {time.time() - t:.2f} secondes")
 
-                time.sleep(0.15)
+                time.sleep(0.5)
 
             current = plateau.get_other_player(current)
 
