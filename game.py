@@ -2,7 +2,7 @@ from collections import deque
 import heapq
 from importlib.resources import path
 
-BARRIERE_START = 5
+BARRIERE_START = 10 #que argument de base, peut se faire overwrite en argument de joueur
 
 class Case : 
 
@@ -68,11 +68,11 @@ class Case :
 #faire inhéritance de classe pour créer des joueurs aux comportements différents
 class Joueur:
 
-    def __init__(self,case: Case, goal : list[Case], plateau:"Plateau"):
+    def __init__(self,case: Case, goal : list[Case], plateau:"Plateau", barrieres=BARRIERE_START):
         self.case = case
         self.goal = goal
         self.plateau = plateau
-        self.barrieres = BARRIERE_START
+        self.barrieres = barrieres
     
         self.previous_case = None
     

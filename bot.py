@@ -63,9 +63,14 @@ class AStarBot(Joueur):
 
 
 class AlphaBotSkeleton(Joueur): #squelette de bot pour les alpha beta, c'est juste joueur avec un attribut hauteur en plus
-    def __init__(self, case, goal, plateau, hauteur):
-        super().__init__(case, goal, plateau)
+    def __init__(self, case, goal, plateau, hauteur, barrieres=BARRIERE_START):
+        super().__init__(case, goal, plateau, barrieres=barrieres)
         self.hauteur = hauteur
+
+
+
+class ASLBotSkeleton(AlphaBotSkeleton):
+    pass
 
 
 class ASBot(AlphaBotSkeleton):
@@ -83,7 +88,7 @@ class AlphaManhattanBot(AlphaBotSkeleton):
         return True
 
 
-class ASLMoveBot(AlphaBotSkeleton):
+class ASLMoveBot(ASLBotSkeleton):
     
     def play(self):
         eval, act = alpha_beta_less_move(eval_a_star,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True,False)
@@ -91,14 +96,14 @@ class ASLMoveBot(AlphaBotSkeleton):
         return True
     
     
-class AS2LMoveBot(AlphaBotSkeleton):
+class AS2LMoveBot(ASLBotSkeleton):
     
     def play(self):
         eval, act = alpha_beta_less_less_move(eval_a_star,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True,False)
         self.plateau.apply_action(self,act) 
         return True
 
-class ASLStallBot(AlphaBotSkeleton):
+class ASLStallBot(ASLBotSkeleton):
     
     def play(self):
         eval, act = alpha_beta_less_move(eval_stall,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True,False)
@@ -112,7 +117,7 @@ class ASStallBot(AlphaBotSkeleton):
         self.plateau.apply_action(self,act)
         return True
     
-class ASLAggressiveBot(AlphaBotSkeleton):
+class ASLAggressiveBot(ASLBotSkeleton):
     
     def play(self):
         eval, act = alpha_beta_less_move(eval_aggresive,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True,False)
@@ -134,7 +139,7 @@ class ASCenterBot(AlphaBotSkeleton):
         self.plateau.apply_action(self,act)
         return True
     
-class ASLCenterBot(AlphaBotSkeleton):
+class ASLCenterBot(ASLBotSkeleton):
     
     def play(self):
         eval, act = alpha_beta_less_move(eval_center,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True,False)
@@ -148,7 +153,7 @@ class ASOpenSpacesBot(AlphaBotSkeleton):
         self.plateau.apply_action(self,act)
         return True
 
-class ASLOpenSpacesBot(AlphaBotSkeleton):
+class ASLOpenSpacesBot(ASLBotSkeleton):
     
     def play(self):
         eval, act = alpha_beta_less_move(eval_accessible_cases,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True,False)
@@ -163,14 +168,14 @@ class ASGigaSmartBot(AlphaBotSkeleton):
         self.plateau.apply_action(self,act)
         return True
 
-class ASLGigaSmartBot(AlphaBotSkeleton):
+class ASLGigaSmartBot(ASLBotSkeleton):
     
     def play(self):
         eval, act = alpha_beta_less_move(eval_giga_smart,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True,False)
         self.plateau.apply_action(self,act)
         return True
     
-class ASLSmartBot(AlphaBotSkeleton):
+class ASLSmartBot(ASLBotSkeleton):
     
     def play(self):
         eval, act = alpha_beta_less_move(eval_smart,self.plateau, self.hauteur, -float("inf"),float("inf"),self,True,False)
