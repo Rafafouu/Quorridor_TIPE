@@ -2,7 +2,7 @@ from collections import deque
 import heapq
 from importlib.resources import path
 
-BARRIERE_START = 5 #que argument de base, peut se faire overwrite en argument de joueur
+BARRIERE_START = 10 #que argument de base, peut se faire overwrite en argument de joueur
 
 class Case : 
 
