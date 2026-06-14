@@ -39,9 +39,10 @@ def alpha_beta(eval ,plateau : Plateau ,profondeur : int,alpha : int,beta : int,
         current = joueur
         value = -float("inf")   
         liste_actions = plateau.get_all_legal_actions(current)
-        
+            
         if not liste_actions:
             print("pas d actions dispo, looser")
+        
 
         for act in liste_actions : 
             backup = plateau.apply_action(current, act)
